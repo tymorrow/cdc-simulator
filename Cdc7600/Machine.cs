@@ -25,16 +25,19 @@
             // Return no time if no instructions exist
             if (!_instructions.Any()) return 0;
 
+            // Create blank schedule
+
+
             // Send all instructions to cpu in sequence.
             foreach (var i in _instructions)
             {
                 // Increment timer
                 _timeCounter++;
 
-                // Put instruction into U registers.
-                _cpu.U3Register.CurrentInstruction = _cpu.U2Register.CurrentInstruction;
-                _cpu.U2Register.CurrentInstruction = _cpu.U1Register.CurrentInstruction;
-                _cpu.U1Register.CurrentInstruction = i;
+                // Put instruction into U* registers.
+                _cpu.U3Register = _cpu.U2Register;
+                _cpu.U2Register = _cpu.U1Register;
+                _cpu.U1Register = i;
 
                 // Update scoreboard
 

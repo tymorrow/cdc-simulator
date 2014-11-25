@@ -5,6 +5,13 @@
         public InstructionLength Length { get; set; }
         public OpCode OpCode { get; set; }
 
+        public int Issue { get; set; }
+        public int Start { get; set; }
+        public int Result { get; set; }
+        public int UnitReady { get; set; }
+        public int? Fetch { get; set; }
+        public int? Store { get; set; }
+
         public enum InstructionLength
         {
             Short,
