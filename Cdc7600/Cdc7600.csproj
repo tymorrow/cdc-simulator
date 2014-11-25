@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D67E8226-EF34-4D60-B490-B6D33681F963}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{E94CEC30-5413-4F8E-9A87-8DF416C05CDB}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CdcSimulator</RootNamespace>
-    <AssemblyName>CdcSimulator</AssemblyName>
+    <RootNamespace>Cdc7600</RootNamespace>
+    <AssemblyName>Cdc7600</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,17 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ArithmeticLogicUnit.cs" />
+    <Compile Include="Machine.cs" />
+    <Compile Include="CentralProcessor.cs" />
+    <Compile Include="Instruction.cs" />
+    <Compile Include="OpCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cdc7600\Cdc7600.csproj">
-      <Project>{e94cec30-5413-4f8e-9a87-8df416c05cdb}</Project>
-      <Name>Cdc7600</Name>
-    </ProjectReference>
+    <Compile Include="Register.cs" />
+    <Compile Include="Scoreboard.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,7 +1,6 @@
-﻿namespace CdcSimulator.Cdc7600
+﻿namespace Cdc7600
 {
     using System.Collections.Generic;
-    using System.Reflection.Emit;
 
     public class CentralProcessor
     {

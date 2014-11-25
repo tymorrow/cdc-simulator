@@ -1,24 +1,23 @@
-﻿namespace CdcSimulator
+﻿namespace Cdc7600
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Cdc7600;
 
-    public class CDC7600
+    public class Machine
     {
-        private readonly List<Instruction> _instructions = new List<Instruction>();
+        private List<Instruction> _instructions = new List<Instruction>();
         private readonly CentralProcessor _cpu = new CentralProcessor();
         private int _timeCounter;
         public int LastRunTime { get; private set; }
 
-        public CDC7600()
+        public Machine()
         {
             LastRunTime = 0;
         }
-        public CDC7600(List<Instruction> instructions)
+
+        public void AddInstructions(List<Instruction> instructions)
         {
             _instructions = instructions;
-            LastRunTime = 0;
         }
 
         public int Run()

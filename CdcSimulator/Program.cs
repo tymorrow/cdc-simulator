@@ -17,7 +17,8 @@
             };
 
             // Create the machine object and pass it the instructions to run
-            var cdc7600 = new CDC7600(instructions);
+            var cdc7600 = new Machine();
+            cdc7600.AddInstructions(instructions);
             var runTime = cdc7600.Run();
 
             // Display results to console.
