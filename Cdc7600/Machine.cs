@@ -31,7 +31,7 @@
             if (!_instructions.Any()) return 0;
             _instructionCounter = 0;
 
-            // Simulate clock cycles processing the instructions until their finished
+            // Simulate clock cycles processing the instructions until all are finished
             while (_instructions.Any(i => !i.IsFinished))
             {
                 // Increment timer
@@ -39,10 +39,12 @@
                 // Print time
                 Console.WriteLine("Cycle: {0}", _timeCounter);
 
-                
+                // Process U* Registers
                 if (_cpu.U3Register != null)
                 {
                     // Process Instruction in U3 Register
+
+
                     _cpu.U3Register.IsFinished = true;
                     _cpu.U3Register = null;
                 }
@@ -52,10 +54,10 @@
                     ShiftRegisters();
                 }
 
-                // Print U Register contents
                 PrintURegisters();
             }
 
+            PrintSchedule();
             return _timeCounter;
         }
 
@@ -80,6 +82,26 @@
             if (_cpu.U3Register != null) u3 = _cpu.U3Register.ToString();
 
             Console.WriteLine("U-Registers: {0}  \t->  {1}  \t->  {2}", u1, u2, u3);
+        }
+
+        private void PrintSchedule()
+        {
+            Console.WriteLine();
+            Console.WriteLine("====================== Timing Schedule ======================");
+            Console.WriteLine("Code\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
+            foreach (var i in _instructions)
+            {
+                Console.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}",
+                    (int)i.OpCode,
+                    i.Length.ToString()[0],
+                    i.Issue,
+                    i.Start,
+                    i.Result,
+                    i.UnitReady,
+                    i.Fetch,
+                    i.Store);
+            }
+            Console.WriteLine();
         }
     }
 }
