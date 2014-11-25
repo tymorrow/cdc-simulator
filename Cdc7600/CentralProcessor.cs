@@ -89,8 +89,8 @@
             #endregion
         };
 
-        public Instruction U1Register = new Instruction();
-        public Instruction U2Register = new Instruction();
-        public Instruction U3Register = new Instruction();
+        public Instruction U1Register;
+        public Instruction U2Register;
+        public Instruction U3Register;
     }
 }

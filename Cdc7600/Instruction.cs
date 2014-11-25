@@ -12,10 +12,17 @@
         public int? Fetch { get; set; }
         public int? Store { get; set; }
 
+        public bool IsFinished { get; set; }
+
         public enum InstructionLength
         {
             Short,
             Long
+        }
+
+        public override string ToString()
+        {
+            return (int)OpCode + " (" + Length.ToString()[0] + ")";
         }
     }
 }

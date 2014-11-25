@@ -11,9 +11,11 @@
             // Create list of instructions
             var instructions = new List<Instruction>
             {
-                new Instruction{},
-                new Instruction{},
-                new Instruction{}
+                new Instruction{OpCode = OpCode.FloatingDivide, Length = Instruction.InstructionLength.Long},
+                new Instruction{OpCode = OpCode.SumXjandBkToAi, Length = Instruction.InstructionLength.Short},
+                new Instruction{OpCode = OpCode.FloatingDivide, Length = Instruction.InstructionLength.Long},
+                new Instruction{OpCode = OpCode.ShiftXiLeftjkPlaces, Length = Instruction.InstructionLength.Short},
+                new Instruction{OpCode = OpCode.GoToKifXNegative, Length = Instruction.InstructionLength.Long}
             };
 
             // Create the machine object and pass it the instructions to run
