@@ -116,29 +116,30 @@
 
     public enum Register
     {
-        X0,
-        X1,
-        X2,
-        X3,
-        X4,
-        X5,
-        X6,
-        X7,
+        K,
+        X0, 
+        X1, // Read
+        X2, // Read
+        X3, // Read
+        X4, // Read
+        X5, // Read
+        X6, // Write
+        X7, // Write
         A0,
-        A1,
-        A2,
-        A3,
-        A4,
-        A5,
-        A6,
-        A7,
+        A1, // Read
+        A2, // Read
+        A3, // Read
+        A4, // Read
+        A5, // Read
+        A6, // Write
+        A7, // Write
         B0,
-        B1,
-        B2,
-        B3,
-        B4,
-        B5,
-        B6,
-        B7
+        B1, // Read
+        B2, // Read
+        B3, // Read
+        B4, // Read
+        B5, // Read
+        B6, // Write
+        B7, // Write
     }
 }

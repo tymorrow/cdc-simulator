@@ -2,8 +2,8 @@
 {
     public class Instruction
     {
-        public InstructionLength Length { get; set; }
         public OpCode OpCode { get; set; }
+        public InstructionLength Length { get; set; }
         public Register Operand1 { get; set; }
         public Register Operand2 { get; set; }
         public Register OutputRegister { get; set; }
