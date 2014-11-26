@@ -11,8 +11,8 @@
         private readonly CentralProcessor _cpu = new CentralProcessor();
         private int _timeCounter = -3;
         private int _instructionCounter;
-        private const int FetchTime = 4;
-        private const int StoreTime = 5;
+        private const int FETCH_TIME = 4;
+        private const int STORE_TIME = 5;
 
         public void AddInstructions(List<Instruction> instructions)
         {
@@ -112,5 +112,33 @@
             }
             Console.WriteLine();
         }
+    }
+
+    public enum Register
+    {
+        X0,
+        X1,
+        X2,
+        X3,
+        X4,
+        X5,
+        X6,
+        X7,
+        A0,
+        A1,
+        A2,
+        A3,
+        A4,
+        A5,
+        A6,
+        A7,
+        B0,
+        B1,
+        B2,
+        B3,
+        B4,
+        B5,
+        B6,
+        B7
     }
 }
