@@ -14,15 +14,15 @@
 
         public bool IsFinished { get; set; }
 
-        public enum InstructionLength
-        {
-            Short,
-            Long
-        }
-
         public override string ToString()
         {
             return (int)OpCode + " (" + Length.ToString()[0] + ")";
         }
+    }
+
+    public enum InstructionLength
+    {
+        Short,
+        Long
     }
 }

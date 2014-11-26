@@ -9,14 +9,10 @@
     {
         private List<Instruction> _instructions = new List<Instruction>();
         private readonly CentralProcessor _cpu = new CentralProcessor();
-        private int _timeCounter;
+        private int _timeCounter = -3;
         private int _instructionCounter;
-        public int LastRunTime { get; private set; }
-
-        public Machine()
-        {
-            LastRunTime = 0;
-        }
+        private const int FetchTime = 4;
+        private const int StoreTime = 5;
 
         public void AddInstructions(List<Instruction> instructions)
         {
@@ -42,11 +38,24 @@
                 // Process U* Registers
                 if (_cpu.U3Register != null)
                 {
-                    // Process Instruction in U3 Register
+                    // Find functional unit for this instruction
 
+
+                    // Detect unit readiness
+
+
+                    // Fill out schedule for instruction
+                    _cpu.U3Register.Issue = _timeCounter;
+                    _cpu.U3Register.Start = _timeCounter;
+                    _cpu.U3Register.Result = _timeCounter + _cpu.TimingMap[_cpu.U3Register.OpCode];
+                    _cpu.U3Register.UnitReady = _timeCounter + _cpu.UnitMap[_cpu.U3Register.OpCode].SegmentTime;
 
                     _cpu.U3Register.IsFinished = true;
+                    // Skip a cycle if instruction is long
+                    if(_cpu.U3Register.Length == InstructionLength.Long)
+                    _timeCounter++;
                     _cpu.U3Register = null;
+                    
                 }
 
                 if (_cpu.U3Register == null)

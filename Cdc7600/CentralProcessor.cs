@@ -4,10 +4,11 @@
 
     public class CentralProcessor
     {
-        public Scoreboard Scoreboard = new Scoreboard();
+        public static Scoreboard Scoreboard = new Scoreboard();
         public Dictionary<OpCode, int> TimingMap = new Dictionary<OpCode, int>
         {
             #region Values
+            // Branch
             {OpCode.Stop, 0},
             {OpCode.ReturnJumpToK, 14},
             {OpCode.GoToKplusBi, 14},
@@ -23,7 +24,7 @@
             {OpCode.GoToKifBiNotEqualsBj, 8},
             {OpCode.GoToKifBiGreaterThanEqualToBj, 8},
             {OpCode.GoToKifBiLessThanBj, 8},
-
+            // Boolean
             {OpCode.TransmitXjToXi, 3},
             {OpCode.LogicalProductXjandXkToXi, 3},
             {OpCode.LogicalSumXjandXkToXi, 3},
@@ -32,7 +33,7 @@
             {OpCode.LogicalProductXjandXkComplementToXi, 3},
             {OpCode.LogicalSumXjandXkComplementToXi, 3},
             {OpCode.LogicalDifferenceXjandXkComplementToXi, 3},
-
+            // Shift
             {OpCode.ShiftXiLeftjkPlaces, 3},
             {OpCode.ShiftXiRightjkPlaces, 3},
             {OpCode.ShiftXiNominallyLeftBjPlaces, 3},
@@ -89,8 +90,98 @@
             #endregion
         };
 
+        public Dictionary<OpCode, PipelinedUnit> UnitMap = new Dictionary<OpCode, PipelinedUnit>
+        {
+            #region Values
+            // Branch
+            {OpCode.Stop, Scoreboard.BranchUnit},
+            {OpCode.ReturnJumpToK, Scoreboard.BranchUnit},
+            {OpCode.GoToKplusBi, Scoreboard.BranchUnit},
+            {OpCode.GoToKifXEqualsZero, Scoreboard.BranchUnit},
+            {OpCode.GoToKifXNotEqualsZero, Scoreboard.BranchUnit},
+            {OpCode.GoToKifXPositive, Scoreboard.BranchUnit},
+            {OpCode.GoToKifXNegative, Scoreboard.BranchUnit},
+            {OpCode.GoToKifInRange, Scoreboard.BranchUnit},
+            {OpCode.GoToKifXOutOfRange, Scoreboard.BranchUnit},
+            {OpCode.GoToKifXDefinite, Scoreboard.BranchUnit},
+            {OpCode.GoToKifXIndefinite, Scoreboard.BranchUnit},
+            {OpCode.GoToKifBiEqualsBj, Scoreboard.BranchUnit},
+            {OpCode.GoToKifBiNotEqualsBj, Scoreboard.BranchUnit},
+            {OpCode.GoToKifBiGreaterThanEqualToBj, Scoreboard.BranchUnit},
+            {OpCode.GoToKifBiLessThanBj, Scoreboard.BranchUnit},
+            // Boolean
+            {OpCode.TransmitXjToXi, Scoreboard.BooleanUnit},
+            {OpCode.LogicalProductXjandXkToXi, Scoreboard.BooleanUnit},
+            {OpCode.LogicalSumXjandXkToXi, Scoreboard.BooleanUnit},
+            {OpCode.LogicalDifferenceXjandXkToXi, Scoreboard.BooleanUnit},
+            {OpCode.TransmitXjandXkComplementToXi, Scoreboard.BooleanUnit},
+            {OpCode.LogicalProductXjandXkComplementToXi, Scoreboard.BooleanUnit},
+            {OpCode.LogicalSumXjandXkComplementToXi, Scoreboard.BooleanUnit},
+            {OpCode.LogicalDifferenceXjandXkComplementToXi, Scoreboard.BooleanUnit},
+            // Shift
+            {OpCode.ShiftXiLeftjkPlaces, Scoreboard.ShiftUnit},
+            {OpCode.ShiftXiRightjkPlaces, Scoreboard.ShiftUnit},
+            {OpCode.ShiftXiNominallyLeftBjPlaces, Scoreboard.ShiftUnit},
+            {OpCode.ShiftXiNominallyRightBjPlaces, Scoreboard.ShiftUnit},
+            {OpCode.NormalizeXkinXiandBj, Scoreboard.ShiftUnit},
+            {OpCode.RoundNormalizeXkinXiandBj, Scoreboard.ShiftUnit},
+            {OpCode.UnpackXktoXiandBj, Scoreboard.ShiftUnit},
+            {OpCode.PackXifromXkandBj, Scoreboard.ShiftUnit},
+            {OpCode.FormjkMaskinXi, Scoreboard.ShiftUnit},
+            // Add
+            {OpCode.FloatingSum, Scoreboard.AddUnit},
+            {OpCode.FloatingDifference, Scoreboard.AddUnit},
+            {OpCode.FloatingDpSum, Scoreboard.AddUnit},
+            {OpCode.FloatingDpDifference, Scoreboard.AddUnit},
+            {OpCode.RoundFloatingSum, Scoreboard.AddUnit},
+            {OpCode.RoundFloatingDifference, Scoreboard.AddUnit},
+            // Long Add
+            {OpCode.IntegerSum, Scoreboard.LongAddUnit},
+            {OpCode.IntegerDifference, Scoreboard.LongAddUnit},
+            // Divide
+            {OpCode.FloatingDivide, Scoreboard.DivideUnit},
+            {OpCode.RoundFloatingDivide, Scoreboard.DivideUnit},
+            {OpCode.Pass, Scoreboard.DivideUnit},
+            {OpCode.SumOfOnes, Scoreboard.DivideUnit},
+            // Multiply
+            {OpCode.FloatingProduct, Scoreboard.MultiplyUnit},
+            {OpCode.RoundFloatingProduct, Scoreboard.MultiplyUnit},
+            {OpCode.FloatingDpProduct, Scoreboard.MultiplyUnit},
+            // Increment
+            {OpCode.SumAjandKToAi, Scoreboard.IncrementUnit},
+            {OpCode.SumBjandKToAi, Scoreboard.IncrementUnit},
+            {OpCode.SumXjandKToAi, Scoreboard.IncrementUnit},
+            {OpCode.SumXjandBkToAi, Scoreboard.IncrementUnit},
+            {OpCode.SumAjandBkToAi, Scoreboard.IncrementUnit},
+            {OpCode.DifferenceAjandBktoAi, Scoreboard.IncrementUnit},
+            {OpCode.SumBjandBktoZi, Scoreboard.IncrementUnit},
+            {OpCode.DifferenceBjandBktoZi, Scoreboard.IncrementUnit},
+            {OpCode.SumAjandKToBi, Scoreboard.IncrementUnit},
+            {OpCode.SumBjandKToBi, Scoreboard.IncrementUnit},
+            {OpCode.SumXjandKToBi, Scoreboard.IncrementUnit},
+            {OpCode.SumXjandBkToBi, Scoreboard.IncrementUnit},
+            {OpCode.SumAjandBkToBi, Scoreboard.IncrementUnit},
+            {OpCode.DifferenceAjandBktoBi, Scoreboard.IncrementUnit},
+            {OpCode.SumBjandBktoBi, Scoreboard.IncrementUnit},
+            {OpCode.DifferenceBjandBktoBi, Scoreboard.IncrementUnit},
+            {OpCode.SumAjandKToXi, Scoreboard.IncrementUnit},
+            {OpCode.SumBjandKToXi, Scoreboard.IncrementUnit},
+            {OpCode.SumXjandKToXi, Scoreboard.IncrementUnit},
+            {OpCode.SumXjandBkToXi, Scoreboard.IncrementUnit},
+            {OpCode.SumAjandBkToXi, Scoreboard.IncrementUnit},
+            {OpCode.DifferenceAjandBktoXi, Scoreboard.IncrementUnit},
+            {OpCode.SumBjandBktoXi, Scoreboard.IncrementUnit},
+            {OpCode.DifferenceBjandBktoXi, Scoreboard.IncrementUnit},
+            #endregion
+        };
+
         public Instruction U1Register;
         public Instruction U2Register;
         public Instruction U3Register;
+
+        public CentralProcessor()
+        {
+
+        }
     }
 }
