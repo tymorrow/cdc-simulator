@@ -1,11 +1,11 @@
-﻿namespace Cdc7600
+﻿namespace CdcMachines
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
 
-    public class Cdc7600Machine
+    public class Cdc7600
     {
         private List<Instruction> _instructions = new List<Instruction>();
         private readonly CentralProcessor _cpu = new CentralProcessor();
@@ -247,34 +247,5 @@
             }
             Console.WriteLine();
         }
-    }
-
-    public enum Register
-    {
-        K = 0,
-        X0, 
-        X1, // Read
-        X2, // Read
-        X3, // Read
-        X4, // Read
-        X5, // Read
-        X6, // Write
-        X7, // Write
-        A0, // 9
-        A1, // Read
-        A2, // Read
-        A3, // Read
-        A4, // Read
-        A5, // Read
-        A6, // Write
-        A7, // Write
-        B0, // 18
-        B1, // Read
-        B2, // Read
-        B3, // Read
-        B4, // Read
-        B5, // Read
-        B6, // Write
-        B7, // Write - 25
     }
 }

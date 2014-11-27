@@ -1,4 +1,4 @@
-﻿namespace Cdc7600
+﻿namespace CdcMachines
 {
     public enum OpCode
     {

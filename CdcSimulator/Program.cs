@@ -1,6 +1,6 @@
 ﻿namespace CdcSimulator
 {
-    using Cdc7600;
+    using CdcMachines;
     using System;
     using System.Collections.Generic;
 
@@ -100,7 +100,7 @@
         static void Main(string[] args)
         {
             // Create the machine object and pass it the instructions to run
-            var cdc7600 = new Cdc7600Machine();
+            var cdc7600 = new Cdc7600();
             cdc7600.AddInstructions(InstructionSet1);
             var runTime = cdc7600.Run();
 

@@ -1,10 +1,10 @@
-﻿namespace Cdc7600
+﻿namespace CdcMachines
 {
     using System.Collections.Generic;
 
     public class CentralProcessor
     {
-        public List<PipelinedUnit> Scoreboard { get; set; }
+        public List<FunctionalUnitPipelined> Scoreboard { get; set; }
         public Dictionary<OpCode, int> TimingMap { get; set; }
         public Dictionary<OpCode, UnitType> UnitMap { get; set; }
 
@@ -182,19 +182,58 @@
                 {OpCode.DifferenceBjandBktoXi, 3},
                 #endregion
             };
-            Scoreboard = new List<PipelinedUnit>
+            Scoreboard = new List<FunctionalUnitPipelined>
             {
                 #region Functional Units
-                new PipelinedUnit(1, UnitType.Branch),
-                new PipelinedUnit(1, UnitType.Boolean),
-                new PipelinedUnit(1, UnitType.Shift),
-                new PipelinedUnit(1, UnitType.Add),
-                new PipelinedUnit(1, UnitType.LongAdd),
-                new PipelinedUnit(18, UnitType.Divide),
-                new PipelinedUnit(2, UnitType.Multiply),
-                new PipelinedUnit(1, UnitType.Increment)
+                new FunctionalUnitPipelined(1, UnitType.Branch),
+                new FunctionalUnitPipelined(1, UnitType.Boolean),
+                new FunctionalUnitPipelined(1, UnitType.Shift),
+                new FunctionalUnitPipelined(1, UnitType.Add),
+                new FunctionalUnitPipelined(1, UnitType.LongAdd),
+                new FunctionalUnitPipelined(18, UnitType.Divide),
+                new FunctionalUnitPipelined(2, UnitType.Multiply),
+                new FunctionalUnitPipelined(1, UnitType.Increment)
                 #endregion
             };
         }
+    }
+    public enum Register
+    {
+        K = 0,
+        X0,
+        X1, // Read
+        X2, // Read
+        X3, // Read
+        X4, // Read
+        X5, // Read
+        X6, // Write
+        X7, // Write
+        A0, // 9
+        A1, // Read
+        A2, // Read
+        A3, // Read
+        A4, // Read
+        A5, // Read
+        A6, // Write
+        A7, // Write
+        B0, // 18
+        B1, // Read
+        B2, // Read
+        B3, // Read
+        B4, // Read
+        B5, // Read
+        B6, // Write
+        B7, // Write - 25
+    }
+    public enum UnitType
+    {
+        Branch,
+        Boolean,
+        Shift,
+        Add,
+        LongAdd,
+        Divide,
+        Multiply,
+        Increment
     }
 }

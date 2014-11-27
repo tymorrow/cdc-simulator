@@ -7,8 +7,8 @@
     <ProjectGuid>{E94CEC30-5413-4F8E-9A87-8DF416C05CDB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cdc7600</RootNamespace>
-    <AssemblyName>Cdc7600</AssemblyName>
+    <RootNamespace>CdcMachines</RootNamespace>
+    <AssemblyName>CdcMachines</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,11 +39,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cdc7600Machine.cs" />
+    <Compile Include="Cdc6600.cs" />
+    <Compile Include="Cdc7600.cs" />
     <Compile Include="CentralProcessor.cs" />
     <Compile Include="Instruction.cs" />
     <Compile Include="OpCode.cs" />
-    <Compile Include="PipelinedUnit.cs" />
+    <Compile Include="FunctionalUnit.cs" />
+    <Compile Include="FunctionalUnitPipelined.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
