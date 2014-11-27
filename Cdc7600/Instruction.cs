@@ -25,10 +25,4 @@
             return (int)OpCode + " (" + Length.ToString()[0] + ")";
         }
     }
-
-    public enum InstructionLength
-    {
-        Short,
-        Long
-    }
 }

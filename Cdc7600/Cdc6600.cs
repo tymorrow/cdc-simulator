@@ -8,7 +8,7 @@
     public class Cdc6600
     {
         private List<Instruction> _instructions = new List<Instruction>();
-        private readonly CentralProcessor _cpu = new CentralProcessor();
+        private readonly Cdc6600Cpu _cpu = new Cdc6600Cpu();
         private int _timeCounter = -3;
         private int _instructionCounter;
         private int _lastWordStart;
@@ -22,11 +22,10 @@
                 i.IsFinished = false;
             _instructions = instructions;
         }
-
-        public int Run()
+        public void Run()
         {
             // Return no time if no instructions exist
-            if (!_instructions.Any()) return 0;
+            if (!_instructions.Any()) return;
             _instructionCounter = 0;
 
             // Simulate clock cycles processing the instructions until all are finished
@@ -59,7 +58,6 @@
             }
 
             PrintSchedule();
-            return _timeCounter;
         }
 
         private void AttemptToProcessNextInstruction()
@@ -74,84 +72,23 @@
             // Check for second order conflict
             foreach(var fu in _cpu.Scoreboard)
             {
-                foreach(var i in fu.Pipeline)
-                {
-                    if(i.OutputRegister == _cpu.U3.Operand1 || 
-                       i.OutputRegister == _cpu.U3.Operand2)
-                    {
-                        // Reserve unit and issue instruction, but delay execution
-                        unit.IsReserved = true;
-                        unit.Pipeline.Enqueue(_cpu.U3);
-                        unit.LastStart = i.Result;
-
-                        _cpu.U3.Issue = _timeCounter;
-                        // Calculate start time
-                        if(i.OpCode >= OpCode.SumAjandKToAi || i.OpCode <= OpCode.DifferenceBjandBktoXi) // Increment
-                        {
-                                
-                            if(i.Operand1 >= Register.A1 && i.Operand1 <= Register.A5) // Read from Memory
-                            {
-                                _cpu.U3.Start = i.Fetch ?? 0;
-                            }
-                            else if(i.Operand1 >= Register.A1 && i.Operand1 <= Register.A5) // Write to Memory
-                            {
-                                _cpu.U3.Start = i.Store ?? 0;
-                            }
-                        }
-                        else
-                        {
-                            _cpu.U3.Start = i.Result;
-                        }
-                        // Calculate when result will be generated
-                        _cpu.U3.Result = _cpu.U3.Start + _cpu.TimingMap[_cpu.U3.OpCode];
-                        CalculateU3StoreFetchTiming();
-                        _cpu.U3.UnitReady = i.Result + unit.SegmentTime;
-                        _cpu.U3.IsFinished = true;
-
-                        if (_cpu.U3.Length == InstructionLength.Long)
-                            _timeCounter++;
-                        _cpu.U3 = null;
-                        return;
-                    }
-                }
+                
             }
             // Check for third order conflict
             foreach (var fu in _cpu.Scoreboard)
             {
-                foreach (var i in fu.Pipeline)
-                {
-                    if (i.Operand1 == _cpu.U3.OutputRegister ||
-                        i.Operand2 == _cpu.U3.OutputRegister)
-                    {
-                        // Issue/Start execution but hold result until conflict resolved
-                        unit.Pipeline.Enqueue(_cpu.U3);
-                        unit.LastStart = _timeCounter;
-
-                        _cpu.U3.Issue = _timeCounter;
-                        _cpu.U3.Start = _timeCounter;
-                        _cpu.U3.Result = i.Result;
-                        CalculateU3StoreFetchTiming();
-                        _cpu.U3.UnitReady = i.Result + unit.SegmentTime;
-                        _cpu.U3.IsFinished = true;
-
-                        if (_cpu.U3.Length == InstructionLength.Long)
-                            _timeCounter++;
-                        _cpu.U3 = null;
-                        return;
-                    }
-                }
+                
             }
 
             // No conflict; issue/start instruction immediately
-            unit.Pipeline.Enqueue(_cpu.U3);
-            unit.LastStart = _timeCounter;
+            // TODO
 
             // Fill out schedule for instruction
             _cpu.U3.Issue = _timeCounter;
             _cpu.U3.Start = _timeCounter;
             _cpu.U3.Result = _timeCounter + _cpu.TimingMap[_cpu.U3.OpCode];
             CalculateU3StoreFetchTiming();
-            _cpu.U3.UnitReady = _timeCounter + unit.SegmentTime;
+            _cpu.U3.UnitReady = _cpu.U3.Result + 1;
             _cpu.U3.IsFinished = true;
 
             // Skip a cycle if instruction is long
@@ -173,30 +110,11 @@
                 _cpu.U3.Store = _cpu.U3.Result + STORE_TIME;
             }
         }
-
         private void UpdateScoreboard()
         {
             foreach(var unit in _cpu.Scoreboard)
             {
-                // Return immediately if no instructions are in the pipeline
-                if (!unit.Pipeline.Any()) continue;
-
-                // Initiate any pending reservations from 2nd order conflicts
-                if(unit.Pipeline.Any(i => i.IsBeingHeld))
-                {
-                    var instructionBeingHeld = unit.Pipeline.Single(i => i.IsBeingHeld);
-                    if(instructionBeingHeld.Start >= _timeCounter)
-                    {
-                        unit.IsReserved = false;
-                    }
-                }
-
-                // Clear the front of the pipeline of completed instructions
-                var frontInstructionCompletionTime = unit.Pipeline.Peek().Result;
-                if (frontInstructionCompletionTime >= _timeCounter)
-                {
-                    unit.Pipeline.Dequeue();
-                }
+                
             }
         }
         private void ShiftRegisters()

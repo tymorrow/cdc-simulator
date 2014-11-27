@@ -41,9 +41,10 @@
   <ItemGroup>
     <Compile Include="Cdc6600.cs" />
     <Compile Include="Cdc7600.cs" />
-    <Compile Include="CentralProcessor.cs" />
+    <Compile Include="Cdc6600Cpu.cs" />
+    <Compile Include="Cdc7600Cpu.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Instruction.cs" />
-    <Compile Include="OpCode.cs" />
     <Compile Include="FunctionalUnit.cs" />
     <Compile Include="FunctionalUnitPipelined.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

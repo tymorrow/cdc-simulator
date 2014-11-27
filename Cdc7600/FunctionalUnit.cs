@@ -2,6 +2,7 @@
 {
     public class FunctionalUnit
     {
+        public Instruction Instruction { get; set; }
         public UnitType Type { get; set; }
         public int TimeReady { get; set; }
         public bool IsReserved { get; set; }

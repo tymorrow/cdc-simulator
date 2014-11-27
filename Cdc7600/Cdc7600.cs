@@ -8,7 +8,7 @@
     public class Cdc7600
     {
         private List<Instruction> _instructions = new List<Instruction>();
-        private readonly CentralProcessor _cpu = new CentralProcessor();
+        private readonly Cdc7600Cpu _cpu = new Cdc7600Cpu();
         private int _timeCounter = -3;
         private int _instructionCounter;
         private int _lastWordStart;
@@ -22,11 +22,10 @@
                 i.IsFinished = false;
             _instructions = instructions;
         }
-
-        public int Run()
+        public void Run()
         {
             // Return no time if no instructions exist
-            if (!_instructions.Any()) return 0;
+            if (!_instructions.Any()) return;
             _instructionCounter = 0;
 
             // Simulate clock cycles processing the instructions until all are finished
@@ -59,7 +58,6 @@
             }
 
             PrintSchedule();
-            return _timeCounter;
         }
 
         private void AttemptToProcessNextInstruction()
@@ -173,7 +171,6 @@
                 _cpu.U3.Store = _cpu.U3.Result + STORE_TIME;
             }
         }
-
         private void UpdateScoreboard()
         {
             foreach(var unit in _cpu.Scoreboard)
