@@ -48,7 +48,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cdc7600\CdcMachines.csproj">
+    <ProjectReference Include="..\CdcMachines\CdcMachines.csproj">
       <Project>{e94cec30-5413-4f8e-9a87-8df416c05cdb}</Project>
       <Name>CdcMachines</Name>
     </ProjectReference>
