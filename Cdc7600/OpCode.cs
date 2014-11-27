@@ -51,18 +51,18 @@
         IntegerSum = 360,
         IntegerDifference = 370,
 
-        // Divide Unit
+        // Divide
         FloatingDivide = 44,
         RoundFloatingDivide = 45,
         Pass = 46,
         SumOfOnes = 47,
 
-        // Multiply Unit
+        // Multiply
         FloatingProduct = 40,
         RoundFloatingProduct = 41,
         FloatingDpProduct = 42,
 
-        // Increment Unit
+        // Increment
         SumAjandKToAi = 50,
         SumBjandKToAi = 51,
         SumXjandKToAi = 52,

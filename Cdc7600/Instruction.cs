@@ -16,6 +16,9 @@
         public int? Store { get; set; }
 
         public bool IsFinished { get; set; }
+        public bool IsBeingHeld { get; set; }
+        public bool IsStartOfWord { get; set; }
+        public bool IsEndOfWord { get; set; }
 
         public override string ToString()
         {
