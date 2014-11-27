@@ -14,12 +14,20 @@
         private int _lastWordStart;
         private const int NEW_WORD_TIME = 8;
         private const int FETCH_TIME = 4;
-        private const int STORE_TIME = 5;
+        private const int STORE_TIME = 4;
 
         public void AddInstructions(List<Instruction> instructions)
         {
             foreach (var i in _instructions)
+            {
                 i.IsFinished = false;
+                i.Issue = 0;
+                i.Start = 0;
+                i.Result = 0;
+                i.UnitReady = 0;
+                i.Fetch = 0;
+                i.Start = 0;
+            }
             _instructions = instructions;
         }
         public void Run()
@@ -84,14 +92,14 @@
 
                         _cpu.U3.Issue = _timeCounter;
                         // Calculate start time
-                        if(i.OpCode >= OpCode.SumAjandKToAi || i.OpCode <= OpCode.DifferenceBjandBktoXi) // Increment
+                        if(i.OpCode >= OpCode.SumAjandKToAi && i.OpCode <= OpCode.DifferenceBjandBktoXi) // Increment
                         {
                                 
                             if(i.Operand1 >= Register.A1 && i.Operand1 <= Register.A5) // Read from Memory
                             {
                                 _cpu.U3.Start = i.Fetch ?? 0;
                             }
-                            else if(i.Operand1 >= Register.A1 && i.Operand1 <= Register.A5) // Write to Memory
+                            else if(i.Operand1 >= Register.A6 && i.Operand1 <= Register.A7) // Write to Memory
                             {
                                 _cpu.U3.Start = i.Store ?? 0;
                             }

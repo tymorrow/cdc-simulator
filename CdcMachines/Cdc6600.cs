@@ -13,13 +13,21 @@
         private int _instructionCounter;
         private int _lastWordStart;
         private const int NEW_WORD_TIME = 8;
-        private const int FETCH_TIME = 4;
+        private const int FETCH_TIME = 5;
         private const int STORE_TIME = 5;
 
         public void AddInstructions(List<Instruction> instructions)
         {
             foreach (var i in _instructions)
+            {
                 i.IsFinished = false;
+                i.Issue = 0;
+                i.Start = 0;
+                i.Result = 0;
+                i.UnitReady = 0;
+                i.Fetch = 0;
+                i.Start = 0;
+            }
             _instructions = instructions;
         }
         public void Run()
@@ -64,26 +72,103 @@
         {
             // Find functional unit for this instruction
             var unitType = _cpu.UnitMap[_cpu.U3.OpCode];
-            var unit = _cpu.Scoreboard.Single(u => u.Type == unitType);
 
             // Check for first order conflict
-            if (!unit.IsReady(_timeCounter)) return;
+            if (_cpu.Scoreboard.Any(u => u.Type == unitType && !u.IsReady()))
+            {
+                return;
+            }
 
-            // Check for second order conflict
+            // Check for second order conflicts
             foreach(var fu in _cpu.Scoreboard)
             {
+                if (fu.InProgress == null && fu.Reserve == null) continue;
                 
+                var dependencies = new List<object>();
+                if (fu.InProgress != null)
+                {
+                    if (fu.InProgress.OutputRegister == _cpu.U3.Operand1)
+                    {
+                        dependencies.Add(new { Instruction = fu.InProgress, Register = fu.InProgress.OutputRegister });
+                    }
+                    if (fu.InProgress.OutputRegister == _cpu.U3.Operand2)
+                    {
+                        dependencies.Add(new { Instruction = fu.InProgress, Register = fu.InProgress.OutputRegister });
+                    }
+                }
+                if (fu.Reserve != null)
+                {
+                    if (fu.Reserve.OutputRegister == _cpu.U3.Operand1)
+                    {
+                        dependencies.Add(new { Instruction = fu.InProgress, Register = fu.Reserve.OutputRegister });
+                    }
+                    if (fu.Reserve.OutputRegister == _cpu.U3.Operand2)
+                    {
+                        dependencies.Add(new { Instruction = fu.InProgress, Register = fu.Reserve.OutputRegister });
+                    }
+                }
+
+                // If there weren't any dependencies found, there's no need to continue
+                if (!dependencies.Any()) continue;
+                if (!_cpu.Scoreboard.Any(u => u.Type == unitType && u.CanReserve())) continue;
+                // Handle dependencies
+                // Issue instruction but delay execution
+                var unit = _cpu.Scoreboard.First(u => u.Type == unitType && u.CanReserve());
+                unit.Reserve = _cpu.U3;
+
+                // Calculate timing for issued instruction
+                _cpu.U3.Issue = _timeCounter;
+
+
+                if (fu.InProgress.OpCode >= OpCode.SumAjandKToAi && fu.InProgress.OpCode <= OpCode.DifferenceBjandBktoXi) // Increment
+                {
+                    if (fu.InProgress.Operand1 >= Register.A1 && fu.InProgress.Operand1 <= Register.A5) // Read from Memory
+                    {
+                        _cpu.U3.Start = fu.InProgress.Fetch ?? 0;
+                    }
+                    else if (fu.InProgress.Operand1 >= Register.A6 && fu.InProgress.Operand1 <= Register.A7) // Write to Memory
+                    {
+                        _cpu.U3.Start = fu.InProgress.Store ?? 0;
+                    }
+                }
+                else
+                {
+                    _cpu.U3.Start = fu.InProgress.Result;
+                }
+                _cpu.U3.Result = _cpu.U3.Start + _cpu.TimingMap[_cpu.U3.OpCode];
+                CalculateU3StoreFetchTiming();
+                _cpu.U3.UnitReady = fu.InProgress.Result + 1;
+                _cpu.U3.IsFinished = true;
+
+                if (_cpu.U3.Length == InstructionLength.Long)
+                    _timeCounter++;
+                _cpu.U3 = null;
+                return;
             }
             // Check for third order conflict
             foreach (var fu in _cpu.Scoreboard)
             {
-                
+                if (fu.InProgress == null) continue;
+
+                if (fu.InProgress.Operand1 == _cpu.U3.OutputRegister ||
+                    fu.InProgress.Operand2 == _cpu.U3.OutputRegister)
+                {
+                    // Issue/Start execution but hold result until conflict resolved
+                    _cpu.U3.Issue = _timeCounter;
+                    _cpu.U3.Start = _timeCounter;
+                    _cpu.U3.Result = fu.InProgress.Result;
+                    CalculateU3StoreFetchTiming();
+                    _cpu.U3.UnitReady = fu.InProgress.Result + 1;
+                    _cpu.U3.IsFinished = true;
+
+                    if (_cpu.U3.Length == InstructionLength.Long)
+                        _timeCounter++;
+                    _cpu.U3 = null;
+                    return;
+                }
             }
 
             // No conflict; issue/start instruction immediately
-            // TODO
-
-            // Fill out schedule for instruction
             _cpu.U3.Issue = _timeCounter;
             _cpu.U3.Start = _timeCounter;
             _cpu.U3.Result = _timeCounter + _cpu.TimingMap[_cpu.U3.OpCode];
@@ -114,7 +199,40 @@
         {
             foreach(var unit in _cpu.Scoreboard)
             {
-                
+                // No instructions in progress or reserved
+                if (unit.InProgress == null && unit.Reserve == null)
+                {
+                    continue;
+                }
+
+                if (unit.Reserve != null)
+                {
+                    // See if 2nd order conflict is resolved
+                    if (unit.Reserve.Start >= _timeCounter)
+                    {
+                        // See if in progress instruction is completed
+                        if (unit.InProgress != null)
+                        {
+                            if (unit.InProgress.UnitReady >= _timeCounter)
+                            {
+                                unit.InProgress = null;
+                            }
+                        }
+                        
+                        if (unit.InProgress == null)
+                        {
+                            // Conflict resolved, instruction is now processing
+                            unit.InProgress = unit.Reserve;
+                        }
+                    }
+                }
+
+                if (unit.InProgress == null) continue;
+                // See if in progress instruction is completed
+                if (unit.InProgress.UnitReady >= _timeCounter)
+                {
+                    unit.InProgress = null;
+                }
             }
         }
         private void ShiftRegisters()

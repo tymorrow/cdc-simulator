@@ -2,19 +2,23 @@
 {
     public class FunctionalUnit
     {
-        public Instruction Instruction { get; set; }
+        public Instruction Reserve { get; set; }
+        public Instruction InProgress { get; set; }
         public UnitType Type { get; set; }
-        public int TimeReady { get; set; }
-        public bool IsReserved { get; set; }
 
         public FunctionalUnit(UnitType type)
         {
             Type = type;
         }
 
-        public virtual bool IsReady(int currentTime)
+        public bool IsReady()
         {
-            return (TimeReady <= currentTime) || IsReserved;
+            return InProgress == null && Reserve == null;
+        }
+
+        public bool CanReserve()
+        {
+            return Reserve == null;
         }
     }
 }
