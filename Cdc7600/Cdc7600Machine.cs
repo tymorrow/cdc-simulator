@@ -35,7 +35,7 @@
                 // Increment clock cycle timer
                 _timeCounter++;
 
-                PrintTime();
+                // PrintTime();
 
                 // Process U Registers
                 if (_cpu.U3 != null)
@@ -56,10 +56,6 @@
                 {
                     ShiftRegisters();
                 }
-
-                PrintURegisters();
-                PrintSchedule();
-                Console.ReadKey();
             }
 
             PrintSchedule();
@@ -110,6 +106,7 @@
                         _cpu.U3.Result = _cpu.U3.Start + _cpu.TimingMap[_cpu.U3.OpCode];
                         CalculateU3StoreFetchTiming();
                         _cpu.U3.UnitReady = i.Result + unit.SegmentTime;
+                        _cpu.U3.IsFinished = true;
 
                         if (_cpu.U3.Length == InstructionLength.Long)
                             _timeCounter++;
@@ -135,6 +132,7 @@
                         _cpu.U3.Result = i.Result;
                         CalculateU3StoreFetchTiming();
                         _cpu.U3.UnitReady = i.Result + unit.SegmentTime;
+                        _cpu.U3.IsFinished = true;
 
                         if (_cpu.U3.Length == InstructionLength.Long)
                             _timeCounter++;
@@ -170,7 +168,7 @@
             {
                 _cpu.U3.Fetch = _cpu.U3.Result + FETCH_TIME;
             }
-            else if (_cpu.U3.Operand1 >= Register.A1 && _cpu.U3.Operand1 <= Register.A5) // Write to Memory
+            else if (_cpu.U3.Operand1 >= Register.A6 && _cpu.U3.Operand1 <= Register.A7) // Write to Memory
             {
                 _cpu.U3.Store = _cpu.U3.Result + STORE_TIME;
             }

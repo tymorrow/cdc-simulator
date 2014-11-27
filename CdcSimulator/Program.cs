@@ -74,7 +74,7 @@
             {
                 OpCode = OpCode.SumAjandKToXi, 
                 Length = InstructionLength.Long,
-                Operand1 = Register.A1,
+                Operand1 = Register.A7,
                 Operand2 = Register.K,
                 OutputRegister = Register.X7,
                 IsStartOfWord = false,
