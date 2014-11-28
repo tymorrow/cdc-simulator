@@ -2,8 +2,7 @@
 {
     public class FunctionalUnit
     {
-        public Instruction Reserve { get; set; }
-        public Instruction InProgress { get; set; }
+        public Instruction InUse { get; set; }
         public UnitType Type { get; set; }
 
         public FunctionalUnit(UnitType type)
@@ -11,14 +10,9 @@
             Type = type;
         }
 
-        public bool IsReady()
+        public bool IsInUse()
         {
-            return InProgress == null && Reserve == null;
-        }
-
-        public bool CanReserve()
-        {
-            return Reserve == null;
+            return InUse != null;
         }
     }
 }

@@ -192,6 +192,8 @@
                 new FunctionalUnit(UnitType.LongAdd),
                 new FunctionalUnit(UnitType.Divide),
                 new FunctionalUnit(UnitType.Multiply),
+                new FunctionalUnit(UnitType.Multiply),
+                new FunctionalUnit(UnitType.Increment),
                 new FunctionalUnit(UnitType.Increment)
                 #endregion
             };

@@ -18,7 +18,7 @@
             // Create the CDC7600 machine object and pass it the instructions to run
             var cdc7600 = new Cdc7600();
             cdc7600.AddInstructions(set1.InstructionSet1);
-            cdc7600.Run();
+            //cdc7600.Run();
 
             Console.ReadKey();
         }
