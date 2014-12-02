@@ -4,11 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E94CEC30-5413-4F8E-9A87-8DF416C05CDB}</ProjectGuid>
+    <ProjectGuid>{E1EE682A-51AF-4C51-9AC1-2E4739DE4760}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CdcMachines</RootNamespace>
-    <AssemblyName>CdcMachines</AssemblyName>
+    <RootNamespace>Cdc.Simulator6600</RootNamespace>
+    <AssemblyName>Cdc.Simulator6600</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,16 +39,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cdc6600.cs" />
-    <Compile Include="Cdc7600.cs" />
-    <Compile Include="Cdc6600Cpu.cs" />
-    <Compile Include="Cdc7600Cpu.cs" />
+    <Compile Include="Cpu.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Instruction.cs" />
     <Compile Include="FunctionalUnit.cs" />
-    <Compile Include="FunctionalUnitPipelined.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Instruction.cs" />
+    <Compile Include="InstructionSet.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

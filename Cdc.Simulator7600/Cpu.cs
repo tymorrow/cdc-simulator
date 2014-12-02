@@ -1,10 +1,15 @@
-﻿namespace CdcMachines
+﻿namespace Cdc.Simulator7600
 {
     using System.Collections.Generic;
 
-    public class Cdc7600Cpu
+    /// <summary>
+    /// Stores information related to the system such as the Scoreboard 
+    /// (stores Pipelined Unit information), TimingMap (maps OpCodes to 
+    /// clock cycles), UnitMap (maps Opcodes to Units), and U registers.
+    /// </summary>
+    public class Cpu
     {
-        public List<FunctionalUnitPipelined> Scoreboard { get; set; }
+        public List<PipelinedUnit> Scoreboard { get; set; }
         public Dictionary<OpCode, int> TimingMap { get; set; }
         public Dictionary<OpCode, UnitType> UnitMap { get; set; }
 
@@ -12,7 +17,7 @@
         public Instruction U2 { get; set; }
         public Instruction U3 { get; set; }
 
-        public Cdc7600Cpu()
+        public Cpu()
         {
             UnitMap = new Dictionary<OpCode, UnitType>
             {
@@ -182,17 +187,17 @@
                 {OpCode.DifferenceBjandBktoXi, 3},
                 #endregion
             };
-            Scoreboard = new List<FunctionalUnitPipelined>
+            Scoreboard = new List<PipelinedUnit>
             {
                 #region Functional Units
-                new FunctionalUnitPipelined(1, UnitType.Branch),
-                new FunctionalUnitPipelined(1, UnitType.Boolean),
-                new FunctionalUnitPipelined(1, UnitType.Shift),
-                new FunctionalUnitPipelined(1, UnitType.Add),
-                new FunctionalUnitPipelined(1, UnitType.LongAdd),
-                new FunctionalUnitPipelined(18, UnitType.Divide),
-                new FunctionalUnitPipelined(2, UnitType.Multiply),
-                new FunctionalUnitPipelined(1, UnitType.Increment)
+                new PipelinedUnit(1, UnitType.Branch),
+                new PipelinedUnit(1, UnitType.Boolean),
+                new PipelinedUnit(1, UnitType.Shift),
+                new PipelinedUnit(1, UnitType.Add),
+                new PipelinedUnit(1, UnitType.LongAdd),
+                new PipelinedUnit(18, UnitType.Divide),
+                new PipelinedUnit(2, UnitType.Multiply),
+                new PipelinedUnit(1, UnitType.Increment)
                 #endregion
             };
         }

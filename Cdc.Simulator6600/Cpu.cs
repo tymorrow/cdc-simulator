@@ -1,8 +1,13 @@
-﻿namespace CdcMachines
+﻿namespace Cdc.Simulator6600
 {
     using System.Collections.Generic;
 
-    public class Cdc6600Cpu
+    /// <summary>
+    /// Stores information related to the system such as the Scoreboard 
+    /// (stores Functional Unit information), TimingMap (maps OpCodes to 
+    /// clock cycles), UnitMap (maps Opcodes to Units), and U registers.
+    /// </summary>
+    public class Cpu
     {
         public List<FunctionalUnit> Scoreboard { get; set; }
         public Dictionary<OpCode, int> TimingMap { get; set; }
@@ -12,7 +17,7 @@
         public Instruction U2 { get; set; }
         public Instruction U3 { get; set; }
 
-        public Cdc6600Cpu()
+        public Cpu()
         {
             UnitMap = new Dictionary<OpCode, UnitType>
             {

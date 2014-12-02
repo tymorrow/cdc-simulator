@@ -1,5 +1,9 @@
-﻿namespace CdcMachines
+﻿namespace Cdc.Simulator6600
 {
+    /// <summary>
+    /// Provides a symbolic enumeration of the available
+    /// registers within the system.
+    /// </summary>
     public enum Register
     {
         K = 0,
@@ -28,6 +32,11 @@
         B6, // Write
         B7, // Write - 25
     }
+
+    /// <summary>
+    /// Provides a symbolic enumeration of the available
+    /// Unit Types within the system.
+    /// </summary>
     public enum UnitType
     {
         Branch,
@@ -40,12 +49,20 @@
         Increment
     }
 
+    /// <summary>
+    /// Provides a symbolic enumeration of the available
+    /// Instruction Lengths usable by the system.
+    /// </summary>
     public enum InstructionLength
     {
         Short,
         Long
     }
 
+    /// <summary>
+    /// Provides an enumeration of all valid OpCodes
+    /// and their integer values.
+    /// </summary>
     public enum OpCode
     {
         // Branch

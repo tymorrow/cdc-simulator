@@ -1,14 +1,17 @@
-﻿namespace CdcMachines
+﻿namespace Cdc.Simulator7600
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
 
+    /// <summary>
+    /// CDC6600 Simulator Class that executes instructions and outputs timing results.
+    /// </summary>
     public class Cdc7600
     {
         private List<Instruction> _instructions = new List<Instruction>();
-        private readonly Cdc7600Cpu _cpu = new Cdc7600Cpu();
+        private readonly Cpu _cpu = new Cpu();
         private int _timeCounter = -3;
         private int _instructionCounter;
         private int _lastWordStart;
@@ -16,6 +19,11 @@
         private const int FETCH_TIME = 4;
         private const int STORE_TIME = 4;
 
+        /// <summary>
+        /// Takes a list of instructions and resets all of the timing information 
+        /// before storing the instructions in an internal field for later use.
+        /// </summary>
+        /// <param name="instructions">Used when Run is executed to determine timing information.</param>
         public void AddInstructions(List<Instruction> instructions)
         {
             foreach (var i in _instructions)
@@ -30,6 +38,10 @@
             }
             _instructions = instructions;
         }
+        /// <summary>
+        /// Takes the internal list of Instructions, if any, and fills out their 
+        /// timing information by simulating CDC behavior and rules.
+        /// </summary>
         public void Run()
         {
             // Return no time if no instructions exist
@@ -68,6 +80,11 @@
             PrintSchedule();
         }
 
+        /// <summary>
+        /// Tries to fill out the timing information for the next instruction in U3
+        /// by assessing first, second, and third conflicts and looking up timing information
+        /// based on instruction contents.
+        /// </summary>
         private void AttemptToProcessNextInstruction()
         {
             // Find functional unit for this instruction
@@ -165,6 +182,9 @@
                 _timeCounter++;
             _cpu.U3 = null;
         }
+        /// <summary>
+        /// Sets the Store or Fetch timing information if necessary based on OpCode.
+        /// </summary>
         private void CalculateU3StoreFetchTiming()
         {
             // Calculate fetch/store timing if necessary
@@ -179,6 +199,9 @@
                 _cpu.U3.Store = _cpu.U3.Result + STORE_TIME;
             }
         }
+        /// <summary>
+        /// Progresses instructions through the pipeline.
+        /// </summary>
         private void UpdateScoreboard()
         {
             foreach(var unit in _cpu.Scoreboard)
@@ -204,6 +227,10 @@
                 }
             }
         }
+        /// <summary>
+        /// Shifts the CPU U registers and adjusts the time counter appropriately
+        /// based on instruction length.
+        /// </summary>
         private void ShiftRegisters()
         {
             if (_cpu.U2 != null && _cpu.U2.IsStartOfWord)
@@ -217,10 +244,16 @@
             _instructionCounter++;
         }
 
+        /// <summary>
+        /// Prints the current value of the time counter to the Console.
+        /// </summary>
         private void PrintTime()
         {
             Console.WriteLine("Cycle: {0}", _timeCounter);
         }
+        /// <summary>
+        /// Prints the current value of the CPU U registers to the Console.
+        /// </summary>
         private void PrintURegisters()
         {
             var u1 = "\t";
@@ -233,6 +266,9 @@
 
             Console.WriteLine("U-Registers: {0}  \t->  {1}  \t->  {2}", u1, u2, u3);
         }
+        /// <summary>
+        /// Prints the timing schedule for the internal list of instructions.
+        /// </summary>
         private void PrintSchedule()
         {
             Console.WriteLine();

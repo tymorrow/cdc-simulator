@@ -6,9 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D67E8226-EF34-4D60-B490-B6D33681F963}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CdcSimulator</RootNamespace>
-    <AssemblyName>CdcSimulator</AssemblyName>
+    <RootNamespace>Cdc.App</RootNamespace>
+    <AssemblyName>Cdc.App</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,17 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InstructionSet.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CdcMachines\CdcMachines.csproj">
-      <Project>{e94cec30-5413-4f8e-9a87-8df416c05cdb}</Project>
-      <Name>CdcMachines</Name>
+    <ProjectReference Include="..\Cdc.Simulator6600\Cdc.Simulator6600.csproj">
+      <Project>{e1ee682a-51af-4c51-9ac1-2e4739de4760}</Project>
+      <Name>Cdc.Simulator6600</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cdc.Simulator7600\Cdc.Simulator7600.csproj">
+      <Project>{350712dc-3b59-47a0-a798-bb7ee7c591d7}</Project>
+      <Name>Cdc.Simulator7600</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

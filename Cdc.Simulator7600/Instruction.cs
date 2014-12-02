@@ -1,5 +1,9 @@
-﻿namespace CdcMachines
+﻿namespace Cdc.Simulator7600
 {
+    /// <summary>
+    /// Stores the content and timing information associated for
+    /// a processable instruction.
+    /// </summary>
     public class Instruction
     {
         public OpCode OpCode { get; set; }
@@ -20,6 +24,10 @@
         public bool IsStartOfWord { get; set; }
         public bool IsEndOfWord { get; set; }
 
+        /// <summary>
+        /// Converts the instruction to a friendlier representation.
+        /// </summary>
+        /// <returns>Returns a string.</returns>
         public override string ToString()
         {
             return (int)OpCode + " (" + Length.ToString()[0] + ")";

@@ -1,8 +1,11 @@
-﻿namespace CdcSimulator
+﻿namespace Cdc.Simulator7600
 {
     using System.Collections.Generic;
-    using CdcMachines;
 
+    /// <summary>
+    /// Provides a readonly list of hardcoded instructions for use
+    /// by the system.
+    /// </summary>
     public class InstructionSet
     {
         // AX^2 + B
