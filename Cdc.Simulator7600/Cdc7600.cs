@@ -15,7 +15,7 @@
         private int _timeCounter = -3;
         private int _instructionCounter;
         private int _lastWordStart;
-        private const int NEW_WORD_TIME = 8;
+        private const int NEW_WORD_TIME = 6;
         private const int FETCH_TIME = 4;
         private const int STORE_TIME = 4;
 
