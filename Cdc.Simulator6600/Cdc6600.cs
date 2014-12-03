@@ -180,58 +180,58 @@
         /// <returns>Returns true if branch was detected, otherwise false.</returns>
         private bool DetectBranch()
         {
-            if (_cpu.U3.OpCode >= OpCode.Stop && _cpu.U3.OpCode <= OpCode.GoToKifBiLessThanBj)
+            var canBranch = false;
+            var branchDestination = _cpu.U3.BranchTo;
+            switch (_cpu.U3.OpCode)
             {
-                var canBranch = false;
-                var branchInstruction = _cpu.U3.BranchTo;
-                switch (_cpu.U3.OpCode)
-                {
-                    case OpCode.ReturnJumpToK:
-                        canBranch = true;
-                        break;
-                    case OpCode.GoToKplusBi:
-                        var index = _instructions.IndexOf(branchInstruction);
-                        branchInstruction = _instructions[index];
-                        canBranch = true;
-                        break;
-                    case OpCode.GoToKifXEqualsZero:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand2] == 0;
-                        break;
-                    case OpCode.GoToKifXNotEqualsZero:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand2] != 0;
-                        break;
-                    case OpCode.GoToKifXPositive:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand2] >= 0;
-                        break;
-                    case OpCode.GoToKifXNegative:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand2] < 0;
-                        break;
-                    case OpCode.GoToKifBiEqualsBj:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand1] == 
-                                    _cpu.Registers[_cpu.U3.Operand2];
-                        break;
-                    case OpCode.GoToKifBiNotEqualsBj:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand1] != 
-                                    _cpu.Registers[_cpu.U3.Operand2];
-                        break;
-                    case OpCode.GoToKifBiGreaterThanEqualToBj:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand1] >= 
-                                    _cpu.Registers[_cpu.U3.Operand2];
-                        break;
-                    case OpCode.GoToKifBiLessThanBj:
-                        canBranch = _cpu.Registers[_cpu.U3.Operand1] < 
-                                    _cpu.Registers[_cpu.U3.Operand2];
-                        break;
-                }
-                if (canBranch)
-                {
-                    
-                }
-
-                return true;
+                case OpCode.ReturnJumpToK:
+                    canBranch = true;
+                    break;
+                case OpCode.GoToKplusBi:
+                    var index = _instructions.IndexOf(branchDestination);
+                    branchDestination = _instructions[index];
+                    canBranch = true;
+                    break;
+                case OpCode.GoToKifXEqualsZero:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] == 0;
+                    break;
+                case OpCode.GoToKifXNotEqualsZero:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] != 0;
+                    break;
+                case OpCode.GoToKifXPositive:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] >= 0;
+                    break;
+                case OpCode.GoToKifXNegative:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] < 0;
+                    break;
+                case OpCode.GoToKifBiEqualsBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] == 
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
+                case OpCode.GoToKifBiNotEqualsBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] != 
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
+                case OpCode.GoToKifBiGreaterThanEqualToBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] >= 
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
+                case OpCode.GoToKifBiLessThanBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] < 
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
             }
+            if (!canBranch) return false;
 
-            return false;
+            var indexOfDestination = _instructions.IndexOf(branchDestination);
+            for (var i = indexOfDestination; i < _instructions.Count; i++)
+            {
+                _instructions[i].Reset();
+            }
+            _instructionCounter = indexOfDestination;
+            _timeCounter += _cpu.U3.Result + OOS_INSTRUCTION_BRANCH_COST;
+            _cpu.U1 = _cpu.U2 = _cpu.U3 = null;
+            return true;
         }
         /// <summary>
         /// Sets the Store or Fetch timing information if necessary based on OpCode.

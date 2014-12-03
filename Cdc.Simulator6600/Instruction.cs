@@ -50,5 +50,21 @@
                     Fetch,
                     Store);
         }
+
+        /// <summary>
+        /// Resets all of the instructions timing information to 
+        /// their default values.
+        /// </summary>
+        internal void Reset()
+        {
+            Issue = 0;
+            Start = 0;
+            Result = 0;
+            UnitReady = 0;
+            Fetch = null;
+            Store = null;
+            IsFinished = false;
+            IsBeingHeld = false;
+        }
     }
 }

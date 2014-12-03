@@ -22,7 +22,7 @@
             cdc6600.AddInstructions(set6600.InstructionSet1);
             cdc6600.Run();
             cdc6600.AddInstructions(set6600.InstructionSet2);
-            //cdc6600.Run();
+            cdc6600.Run();
 
             // Create the CDC7600 machine object and pass it the instructions to run.
             var cdc7600 = new Cdc7600();
