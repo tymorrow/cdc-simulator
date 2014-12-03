@@ -21,11 +21,15 @@
             var cdc6600 = new Cdc6600();
             cdc6600.AddInstructions(set6600.InstructionSet1);
             cdc6600.Run();
+            cdc6600.AddInstructions(set6600.InstructionSet2);
+            cdc6600.Run();
 
             // Create the CDC7600 machine object and pass it the instructions to run.
             var cdc7600 = new Cdc7600();
             cdc7600.AddInstructions(set7600.InstructionSet1);
-            //cdc7600.Run();
+            cdc7600.Run();
+            cdc7600.AddInstructions(set7600.InstructionSet2);
+            cdc7600.Run();
 
             Console.ReadKey();
         }

@@ -22,88 +22,17 @@
 
         public Cpu()
         {
-            UnitMap = new Dictionary<OpCode, UnitType>
+            Scoreboard = new List<PipelinedUnit>
             {
-                #region Values
-                // Branch
-                {OpCode.Stop, UnitType.Branch},
-                {OpCode.ReturnJumpToK, UnitType.Branch},
-                {OpCode.GoToKplusBi, UnitType.Branch},
-                {OpCode.GoToKifXEqualsZero, UnitType.Branch},
-                {OpCode.GoToKifXNotEqualsZero, UnitType.Branch},
-                {OpCode.GoToKifXPositive, UnitType.Branch},
-                {OpCode.GoToKifXNegative, UnitType.Branch},
-                {OpCode.GoToKifInRange, UnitType.Branch},
-                {OpCode.GoToKifXOutOfRange, UnitType.Branch},
-                {OpCode.GoToKifXDefinite, UnitType.Branch},
-                {OpCode.GoToKifXIndefinite, UnitType.Branch},
-                {OpCode.GoToKifBiEqualsBj, UnitType.Branch},
-                {OpCode.GoToKifBiNotEqualsBj, UnitType.Branch},
-                {OpCode.GoToKifBiGreaterThanEqualToBj, UnitType.Branch},
-                {OpCode.GoToKifBiLessThanBj, UnitType.Branch},
-                // Boolean
-                {OpCode.TransmitXjToXi, UnitType.Boolean},
-                {OpCode.LogicalProductXjandXkToXi, UnitType.Boolean},
-                {OpCode.LogicalSumXjandXkToXi, UnitType.Boolean},
-                {OpCode.LogicalDifferenceXjandXkToXi, UnitType.Boolean},
-                {OpCode.TransmitXjandXkComplementToXi, UnitType.Boolean},
-                {OpCode.LogicalProductXjandXkComplementToXi, UnitType.Boolean},
-                {OpCode.LogicalSumXjandXkComplementToXi, UnitType.Boolean},
-                {OpCode.LogicalDifferenceXjandXkComplementToXi, UnitType.Boolean},
-                // Shift
-                {OpCode.ShiftXiLeftjkPlaces, UnitType.Shift},
-                {OpCode.ShiftXiRightjkPlaces, UnitType.Shift},
-                {OpCode.ShiftXiNominallyLeftBjPlaces, UnitType.Shift},
-                {OpCode.ShiftXiNominallyRightBjPlaces, UnitType.Shift},
-                {OpCode.NormalizeXkinXiandBj, UnitType.Shift},
-                {OpCode.RoundNormalizeXkinXiandBj, UnitType.Shift},
-                {OpCode.UnpackXktoXiandBj, UnitType.Shift},
-                {OpCode.PackXifromXkandBj, UnitType.Shift},
-                {OpCode.FormjkMaskinXi, UnitType.Shift},
-                // Add
-                {OpCode.FloatingSum, UnitType.Add},
-                {OpCode.FloatingDifference, UnitType.Add},
-                {OpCode.FloatingDpSum, UnitType.Add},
-                {OpCode.FloatingDpDifference, UnitType.Add},
-                {OpCode.RoundFloatingSum, UnitType.Add},
-                {OpCode.RoundFloatingDifference, UnitType.Add},
-                // Long Add
-                {OpCode.IntegerSum, UnitType.LongAdd},
-                {OpCode.IntegerDifference, UnitType.LongAdd},
-                // Divide
-                {OpCode.FloatingDivide, UnitType.Divide},
-                {OpCode.RoundFloatingDivide, UnitType.Divide},
-                {OpCode.Pass, UnitType.Divide},
-                {OpCode.SumOfOnes, UnitType.Divide},
-                // Multiply
-                {OpCode.FloatingProduct, UnitType.Multiply},
-                {OpCode.RoundFloatingProduct, UnitType.Multiply},
-                {OpCode.FloatingDpProduct, UnitType.Multiply},
-                // Increment
-                {OpCode.SumAjandKToAi, UnitType.Increment},
-                {OpCode.SumBjandKToAi, UnitType.Increment},
-                {OpCode.SumXjandKToAi, UnitType.Increment},
-                {OpCode.SumXjandBkToAi, UnitType.Increment},
-                {OpCode.SumAjandBkToAi, UnitType.Increment},
-                {OpCode.DifferenceAjandBktoAi, UnitType.Increment},
-                {OpCode.SumBjandBktoZi, UnitType.Increment},
-                {OpCode.DifferenceBjandBktoZi, UnitType.Increment},
-                {OpCode.SumAjandKToBi, UnitType.Increment},
-                {OpCode.SumBjandKToBi, UnitType.Increment},
-                {OpCode.SumXjandKToBi, UnitType.Increment},
-                {OpCode.SumXjandBkToBi, UnitType.Increment},
-                {OpCode.SumAjandBkToBi, UnitType.Increment},
-                {OpCode.DifferenceAjandBktoBi, UnitType.Increment},
-                {OpCode.SumBjandBktoBi, UnitType.Increment},
-                {OpCode.DifferenceBjandBktoBi, UnitType.Increment},
-                {OpCode.SumAjandKToXi, UnitType.Increment},
-                {OpCode.SumBjandKToXi, UnitType.Increment},
-                {OpCode.SumXjandKToXi, UnitType.Increment},
-                {OpCode.SumXjandBkToXi, UnitType.Increment},
-                {OpCode.SumAjandBkToXi, UnitType.Increment},
-                {OpCode.DifferenceAjandBktoXi, UnitType.Increment},
-                {OpCode.SumBjandBktoXi, UnitType.Increment},
-                {OpCode.DifferenceBjandBktoXi, UnitType.Increment},
+                #region Functional Units
+                new PipelinedUnit(1, UnitType.Branch),
+                new PipelinedUnit(1, UnitType.Boolean),
+                new PipelinedUnit(1, UnitType.Shift),
+                new PipelinedUnit(1, UnitType.Add),
+                new PipelinedUnit(1, UnitType.LongAdd),
+                new PipelinedUnit(18, UnitType.Divide),
+                new PipelinedUnit(2, UnitType.Multiply),
+                new PipelinedUnit(1, UnitType.Increment)
                 #endregion
             };
             TimingMap = new Dictionary<OpCode, int>
@@ -190,19 +119,107 @@
                 {OpCode.DifferenceBjandBktoXi, 3},
                 #endregion
             };
-            Scoreboard = new List<PipelinedUnit>
+            UnitMap = new Dictionary<OpCode, UnitType>
             {
-                #region Functional Units
-                new PipelinedUnit(1, UnitType.Branch),
-                new PipelinedUnit(1, UnitType.Boolean),
-                new PipelinedUnit(1, UnitType.Shift),
-                new PipelinedUnit(1, UnitType.Add),
-                new PipelinedUnit(1, UnitType.LongAdd),
-                new PipelinedUnit(18, UnitType.Divide),
-                new PipelinedUnit(2, UnitType.Multiply),
-                new PipelinedUnit(1, UnitType.Increment)
+                #region Values
+                // Branch
+                {OpCode.Stop, UnitType.Branch},
+                {OpCode.ReturnJumpToK, UnitType.Branch},
+                {OpCode.GoToKplusBi, UnitType.Branch},
+                {OpCode.GoToKifXEqualsZero, UnitType.Branch},
+                {OpCode.GoToKifXNotEqualsZero, UnitType.Branch},
+                {OpCode.GoToKifXPositive, UnitType.Branch},
+                {OpCode.GoToKifXNegative, UnitType.Branch},
+                {OpCode.GoToKifInRange, UnitType.Branch},
+                {OpCode.GoToKifXOutOfRange, UnitType.Branch},
+                {OpCode.GoToKifXDefinite, UnitType.Branch},
+                {OpCode.GoToKifXIndefinite, UnitType.Branch},
+                {OpCode.GoToKifBiEqualsBj, UnitType.Branch},
+                {OpCode.GoToKifBiNotEqualsBj, UnitType.Branch},
+                {OpCode.GoToKifBiGreaterThanEqualToBj, UnitType.Branch},
+                {OpCode.GoToKifBiLessThanBj, UnitType.Branch},
+                // Boolean
+                {OpCode.TransmitXjToXi, UnitType.Boolean},
+                {OpCode.LogicalProductXjandXkToXi, UnitType.Boolean},
+                {OpCode.LogicalSumXjandXkToXi, UnitType.Boolean},
+                {OpCode.LogicalDifferenceXjandXkToXi, UnitType.Boolean},
+                {OpCode.TransmitXjandXkComplementToXi, UnitType.Boolean},
+                {OpCode.LogicalProductXjandXkComplementToXi, UnitType.Boolean},
+                {OpCode.LogicalSumXjandXkComplementToXi, UnitType.Boolean},
+                {OpCode.LogicalDifferenceXjandXkComplementToXi, UnitType.Boolean},
+                // Shift
+                {OpCode.ShiftXiLeftjkPlaces, UnitType.Shift},
+                {OpCode.ShiftXiRightjkPlaces, UnitType.Shift},
+                {OpCode.ShiftXiNominallyLeftBjPlaces, UnitType.Shift},
+                {OpCode.ShiftXiNominallyRightBjPlaces, UnitType.Shift},
+                {OpCode.NormalizeXkinXiandBj, UnitType.Shift},
+                {OpCode.RoundNormalizeXkinXiandBj, UnitType.Shift},
+                {OpCode.UnpackXktoXiandBj, UnitType.Shift},
+                {OpCode.PackXifromXkandBj, UnitType.Shift},
+                {OpCode.FormjkMaskinXi, UnitType.Shift},
+                // Add
+                {OpCode.FloatingSum, UnitType.Add},
+                {OpCode.FloatingDifference, UnitType.Add},
+                {OpCode.FloatingDpSum, UnitType.Add},
+                {OpCode.FloatingDpDifference, UnitType.Add},
+                {OpCode.RoundFloatingSum, UnitType.Add},
+                {OpCode.RoundFloatingDifference, UnitType.Add},
+                // Long Add
+                {OpCode.IntegerSum, UnitType.LongAdd},
+                {OpCode.IntegerDifference, UnitType.LongAdd},
+                // Divide
+                {OpCode.FloatingDivide, UnitType.Divide},
+                {OpCode.RoundFloatingDivide, UnitType.Divide},
+                {OpCode.Pass, UnitType.Divide},
+                {OpCode.SumOfOnes, UnitType.Divide},
+                // Multiply
+                {OpCode.FloatingProduct, UnitType.Multiply},
+                {OpCode.RoundFloatingProduct, UnitType.Multiply},
+                {OpCode.FloatingDpProduct, UnitType.Multiply},
+                // Increment
+                {OpCode.SumAjandKToAi, UnitType.Increment},
+                {OpCode.SumBjandKToAi, UnitType.Increment},
+                {OpCode.SumXjandKToAi, UnitType.Increment},
+                {OpCode.SumXjandBkToAi, UnitType.Increment},
+                {OpCode.SumAjandBkToAi, UnitType.Increment},
+                {OpCode.DifferenceAjandBktoAi, UnitType.Increment},
+                {OpCode.SumBjandBktoZi, UnitType.Increment},
+                {OpCode.DifferenceBjandBktoZi, UnitType.Increment},
+                {OpCode.SumAjandKToBi, UnitType.Increment},
+                {OpCode.SumBjandKToBi, UnitType.Increment},
+                {OpCode.SumXjandKToBi, UnitType.Increment},
+                {OpCode.SumXjandBkToBi, UnitType.Increment},
+                {OpCode.SumAjandBkToBi, UnitType.Increment},
+                {OpCode.DifferenceAjandBktoBi, UnitType.Increment},
+                {OpCode.SumBjandBktoBi, UnitType.Increment},
+                {OpCode.DifferenceBjandBktoBi, UnitType.Increment},
+                {OpCode.SumAjandKToXi, UnitType.Increment},
+                {OpCode.SumBjandKToXi, UnitType.Increment},
+                {OpCode.SumXjandKToXi, UnitType.Increment},
+                {OpCode.SumXjandBkToXi, UnitType.Increment},
+                {OpCode.SumAjandBkToXi, UnitType.Increment},
+                {OpCode.DifferenceAjandBktoXi, UnitType.Increment},
+                {OpCode.SumBjandBktoXi, UnitType.Increment},
+                {OpCode.DifferenceBjandBktoXi, UnitType.Increment},
                 #endregion
             };
+            Registers = new Dictionary<Register, int>();
+        }
+
+        /// <summary>
+        /// Resets the state of the _cpu for a completely new set
+        /// of instructions.
+        /// </summary>
+        public void Reset()
+        {
+            U1 = U2 = U3 = null;
+            foreach (var unit in Scoreboard)
+            {
+                unit.IsReserved = false;
+                unit.LastStart = 0;
+                unit.Pipeline.Clear();
+            }
+            Registers.Clear();
         }
     }
 }

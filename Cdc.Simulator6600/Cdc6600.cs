@@ -11,10 +11,12 @@
     public class Cdc6600
     {
         private List<Instruction> _instructions = new List<Instruction>();
+        private List<string> _output = new List<string>();
         private readonly Cpu _cpu = new Cpu();
         private int _timeCounter = -3;
         private int _instructionCounter;
         private int _lastWordStart;
+        private const string NAME = "CDC6600";
         private const int NEW_WORD_TIME = 8;
         private const int FETCH_TIME = 5;
         private const int STORE_TIME = 5;
@@ -26,16 +28,12 @@
         /// <param name="instructions">Used when Run is executed to determine timing information.</param>
         public void AddInstructions(List<Instruction> instructions)
         {
-            foreach (var i in _instructions)
-            {
-                i.IsFinished = false;
-                i.Issue = 0;
-                i.Start = 0;
-                i.Result = 0;
-                i.UnitReady = 0;
-                i.Fetch = 0;
-                i.Start = 0;
-            }
+            _instructions.Clear();
+            _output.Clear();
+            _cpu.Reset();
+            _timeCounter = -3;
+            _instructionCounter = 0;
+            _lastWordStart = 0;
             _instructions = instructions;
         }
         /// <summary>
@@ -169,6 +167,7 @@
             _cpu.U3.UnitReady = _cpu.U3.Result + 1;
             _cpu.U3.IsFinished = true;
             unit.InUse = _cpu.U3;
+            _output.Add(_cpu.U3.GetScheduleOutput());
 
             // Skip a cycle if instruction is long
             if (_cpu.U3.Length == InstructionLength.Long)
@@ -267,19 +266,12 @@
         private void PrintSchedule()
         {
             Console.WriteLine();
+            Console.WriteLine(NAME);
             Console.WriteLine("====================== Timing Schedule ======================");
             Console.WriteLine("Code\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
-            foreach (var i in _instructions)
+            foreach (var i in _output)
             {
-                Console.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}",
-                    (int)i.OpCode,
-                    i.Length.ToString()[0],
-                    i.Issue,
-                    i.Start,
-                    i.Result,
-                    i.UnitReady,
-                    i.Fetch,
-                    i.Store);
+                Console.WriteLine(i);
             }
             Console.WriteLine();
         }
