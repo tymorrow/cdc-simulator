@@ -20,7 +20,8 @@
                 Operand2 = Register.K,
                 OutputRegister = Register.X1,
                 IsStartOfWord = true,
-                IsEndOfWord = false
+                IsEndOfWord = false,
+                Value = 1
             }, // Fetch X
             new Instruction
             {
@@ -30,7 +31,8 @@
                 Operand2 = Register.K,
                 OutputRegister = Register.X2,
                 IsStartOfWord = false,
-                IsEndOfWord = true
+                IsEndOfWord = true,
+                Value = 1
             }, // Fetch A
             new Instruction
             {
@@ -60,7 +62,8 @@
                 Operand2 = Register.K,
                 OutputRegister = Register.X3,
                 IsStartOfWord = false,
-                IsEndOfWord = true
+                IsEndOfWord = true,
+                Value = 1
             }, // Fetch B
             new Instruction
             {
@@ -96,7 +99,8 @@
                 Operand2 = Register.K,
                 OutputRegister = Register.X1,
                 IsStartOfWord = true,
-                IsEndOfWord = false
+                IsEndOfWord = false,
+                Value = 1
             }, // Fetch X
             new Instruction
             {
@@ -106,7 +110,8 @@
                 Operand2 = Register.K,
                 OutputRegister = Register.X2,
                 IsStartOfWord = false,
-                IsEndOfWord = true
+                IsEndOfWord = true,
+                Value = 2
             }, // Fetch A
             new Instruction
             {
@@ -136,7 +141,8 @@
                 Operand2 = Register.K,
                 OutputRegister = Register.X3,
                 IsStartOfWord = false,
-                IsEndOfWord = true
+                IsEndOfWord = true,
+                Value = 3
             }, // Fetch B
             new Instruction
             {

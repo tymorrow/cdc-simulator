@@ -12,6 +12,7 @@
         public Register Operand2 { get; set; }
         public Register OutputRegister { get; set; }
         public Instruction BranchTo { get; set; }
+        public int Value { get; set; }
 
         public int Issue { get; set; }
         public int Start { get; set; }

@@ -1,6 +1,8 @@
 ﻿namespace Cdc.Simulator6600
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Stores information related to the system such as the Scoreboard 
@@ -205,7 +207,13 @@
                 {OpCode.DifferenceBjandBktoXi, UnitType.Increment},
                 #endregion
             };
+            // Initialize all register values to zero.
             Registers = new Dictionary<Register, int>();
+            var registerTypes = Enum.GetValues(typeof(Register)).Cast<Register>();
+            foreach (var e in registerTypes)
+            {
+                Registers.Add(e, 0);
+            }
         }
 
         /// <summary>
@@ -219,7 +227,11 @@
             {
                 unit.InUse = null;
             }
-            Registers.Clear();
+            var registerTypes = Enum.GetValues(typeof(Register)).Cast<Register>();
+            foreach (var e in registerTypes)
+            {
+                Registers[e] = 0;
+            }
         }
     }
 }
