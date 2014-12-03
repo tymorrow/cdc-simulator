@@ -4,14 +4,17 @@
 
     /// <summary>
     /// Stores information related to the system such as the Scoreboard 
-    /// (stores Functional Unit information), TimingMap (maps OpCodes to 
-    /// clock cycles), UnitMap (maps Opcodes to Units), and U registers.
+    /// (stores Functional Unit information), a timing map (maps OpCodes to 
+    /// clock cycles), functional unit map (maps Opcodes to Units), 
+    /// a register-value map (maps Register enums to a value), and U registers,
+    /// which store instructions.
     /// </summary>
     public class Cpu
     {
         public List<FunctionalUnit> Scoreboard { get; set; }
         public Dictionary<OpCode, int> TimingMap { get; set; }
         public Dictionary<OpCode, UnitType> UnitMap { get; set; }
+        public Dictionary<Register, int> Registers { get; set; } 
 
         public Instruction U1 { get; set; }
         public Instruction U2 { get; set; }

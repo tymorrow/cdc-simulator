@@ -190,12 +190,121 @@
             }, // Store Y
             #endregion
         };
-        // AX^2 + BX + C (X and Y are vectors of n elements, where n = 5)
-        public readonly List<Instruction> InstructionSet3 = new List<Instruction>
-        {
-            #region Instructions
+        // AX^2 + BX + C (X and Y are vectors of n elements)
+        public readonly List<Instruction> InstructionSet3 = new List<Instruction>();
 
-                #endregion
-        }; 
+        public InstructionSet()
+        {
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.SumAjandKToXi, 
+                Length = InstructionLength.Long,
+                Operand1 = Register.A1,
+                Operand2 = Register.K,
+                OutputRegister = Register.X1,
+                IsStartOfWord = true,
+                IsEndOfWord = false
+            }); // Fetch X
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.SumAjandKToXi, 
+                Length = InstructionLength.Long,
+                Operand1 = Register.A2,
+                Operand2 = Register.K,
+                OutputRegister = Register.X2,
+                IsStartOfWord = false,
+                IsEndOfWord = true
+            }); // Fetch A
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.FloatingProduct, 
+                Length = InstructionLength.Short,
+                Operand1 = Register.X1,
+                Operand2 = Register.X1,
+                OutputRegister = Register.X0,
+                IsStartOfWord = true,
+                IsEndOfWord = false
+            }); // Form X^2
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.FloatingProduct, 
+                Length = InstructionLength.Short,
+                Operand1 = Register.X0,
+                Operand2 = Register.X2,
+                OutputRegister = Register.X6,
+                IsStartOfWord = false,
+                IsEndOfWord = false
+            }); // Form AX^2
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.SumAjandKToXi, 
+                Length = InstructionLength.Long,
+                Operand1 = Register.A3,
+                Operand2 = Register.K,
+                OutputRegister = Register.X3,
+                IsStartOfWord = false,
+                IsEndOfWord = true
+            }); // Fetch B
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.SumAjandKToXi, 
+                Length = InstructionLength.Long,
+                Operand1 = Register.A4,
+                Operand2 = Register.K,
+                OutputRegister = Register.X4,
+                IsStartOfWord = true,
+                IsEndOfWord = false
+            }); // Fetch C
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.FloatingProduct, 
+                Length = InstructionLength.Short,
+                Operand1 = Register.X3,
+                Operand2 = Register.X1,
+                OutputRegister = Register.X3,
+                IsStartOfWord = false,
+                IsEndOfWord = false
+            }); // Form BX
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.FloatingSum,   
+                Length = InstructionLength.Short,
+                Operand1 = Register.X6,
+                Operand2 = Register.X3,
+                OutputRegister = Register.X5,
+                IsStartOfWord = false,
+                IsEndOfWord = true
+            }); // Form AX^2+BX
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.FloatingSum,   
+                Length = InstructionLength.Short,
+                Operand1 = Register.X6,
+                Operand2 = Register.X3,
+                OutputRegister = Register.X7,
+                IsStartOfWord = true,
+                IsEndOfWord = false
+            }); // Form Y
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.SumAjandKToXi, 
+                Length = InstructionLength.Long,
+                Operand1 = Register.A7,
+                Operand2 = Register.K,
+                OutputRegister = Register.X7,
+                IsStartOfWord = false,
+                IsEndOfWord = true
+            }); // Store Y
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.GoToKifBiNotEqualsBj, 
+                Length = InstructionLength.Long,
+                Operand1 = Register.B0,
+                Operand2 = Register.K,
+                OutputRegister = Register.X7,
+                IsStartOfWord = false,
+                IsEndOfWord = true
+            }); // Conditional Branch
+        }
     }
 }
