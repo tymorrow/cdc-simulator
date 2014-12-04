@@ -39,14 +39,15 @@
     /// </summary>
     public enum UnitType
     {
-        Branch,
+        Normalize,
         Boolean,
         Shift,
-        Add,
-        LongAdd,
-        Divide,
-        Multiply,
-        Increment
+        FloatingAdd,
+        FixedAdd,
+        FloatingDivide,
+        FloatingMultiply,
+        Increment,
+        PopulationCount
     }
 
     /// <summary>
@@ -65,7 +66,7 @@
     /// </summary>
     public enum OpCode
     {
-        // Branch
+        // Normalize
         Stop = 00,
         ReturnJumpToK = 01,
         GoToKplusBi = 02,
@@ -103,24 +104,24 @@
         PackXifromXkandBj = 27,
         FormjkMaskinXi = 43,
 
-        // Add
+        // FloatingAdd
         FloatingSum = 300,
         FloatingDifference = 310,
         FloatingDpSum = 320,
         FloatingDpDifference = 330,
         RoundFloatingSum = 340,
         RoundFloatingDifference = 350,
-        // Long Add
+        // FixedAdd
         IntegerSum = 360,
         IntegerDifference = 370,
 
-        // Divide
+        // FloatingDivide
         FloatingDivide = 44,
         RoundFloatingDivide = 45,
         Pass = 46,
         SumOfOnes = 47,
 
-        // Multiply
+        // FloatingMultiply
         FloatingProduct = 40,
         RoundFloatingProduct = 41,
         FloatingDpProduct = 42,
@@ -150,5 +151,7 @@
         DifferenceAjandBktoXi = 75,
         SumBjandBktoXi = 76,
         DifferenceBjandBktoXi = 77,
+
+        // Population Count (unknown)
     }
 }

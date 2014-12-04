@@ -1,6 +1,8 @@
 ﻿namespace Cdc.Simulator7600
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Stores information related to the system such as the Scoreboard 
@@ -25,119 +27,119 @@
             Scoreboard = new List<PipelinedUnit>
             {
                 #region Functional Units
-                new PipelinedUnit(1, UnitType.Branch),
+                new PipelinedUnit(1, UnitType.Normalize),
                 new PipelinedUnit(1, UnitType.Boolean),
                 new PipelinedUnit(1, UnitType.Shift),
-                new PipelinedUnit(1, UnitType.Add),
-                new PipelinedUnit(1, UnitType.LongAdd),
-                new PipelinedUnit(18, UnitType.Divide),
-                new PipelinedUnit(2, UnitType.Multiply),
+                new PipelinedUnit(1, UnitType.FloatingAdd),
+                new PipelinedUnit(1, UnitType.FixedAdd),
+                new PipelinedUnit(18, UnitType.FloatingDivide),
+                new PipelinedUnit(2, UnitType.FloatingMultiply),
                 new PipelinedUnit(1, UnitType.Increment)
                 #endregion
             };
             TimingMap = new Dictionary<OpCode, int>
             {
                 #region Values
-                // Branch
+                // Normalize
                 {OpCode.Stop, 0},
-                {OpCode.ReturnJumpToK, 14},
-                {OpCode.GoToKplusBi, 14},
-                {OpCode.GoToKifXEqualsZero, 9},
-                {OpCode.GoToKifXNotEqualsZero, 9},
-                {OpCode.GoToKifXPositive, 9},
-                {OpCode.GoToKifXNegative, 9},
-                {OpCode.GoToKifInRange, 9},
-                {OpCode.GoToKifXOutOfRange, 9},
-                {OpCode.GoToKifXDefinite, 9},
-                {OpCode.GoToKifXIndefinite, 9},
-                {OpCode.GoToKifBiEqualsBj, 8},
-                {OpCode.GoToKifBiNotEqualsBj, 8},
-                {OpCode.GoToKifBiGreaterThanEqualToBj, 8},
-                {OpCode.GoToKifBiLessThanBj, 8},
+                {OpCode.ReturnJumpToK, 9},
+                {OpCode.GoToKplusBi, 9},
+                {OpCode.GoToKifXEqualsZero, 4},
+                {OpCode.GoToKifXNotEqualsZero, 4},
+                {OpCode.GoToKifXPositive, 4},
+                {OpCode.GoToKifXNegative, 4},
+                {OpCode.GoToKifInRange, 4},
+                {OpCode.GoToKifXOutOfRange, 4},
+                {OpCode.GoToKifXDefinite, 4},
+                {OpCode.GoToKifXIndefinite, 4},
+                {OpCode.GoToKifBiEqualsBj, 3},
+                {OpCode.GoToKifBiNotEqualsBj, 3},
+                {OpCode.GoToKifBiGreaterThanEqualToBj, 3},
+                {OpCode.GoToKifBiLessThanBj, 3},
                 // Boolean
-                {OpCode.TransmitXjToXi, 3},
-                {OpCode.LogicalProductXjandXkToXi, 3},
-                {OpCode.LogicalSumXjandXkToXi, 3},
-                {OpCode.LogicalDifferenceXjandXkToXi, 3},
-                {OpCode.TransmitXjandXkComplementToXi, 3},
-                {OpCode.LogicalProductXjandXkComplementToXi, 3},
-                {OpCode.LogicalSumXjandXkComplementToXi, 3},
-                {OpCode.LogicalDifferenceXjandXkComplementToXi, 3},
+                {OpCode.TransmitXjToXi, 2},
+                {OpCode.LogicalProductXjandXkToXi, 2},
+                {OpCode.LogicalSumXjandXkToXi, 2},
+                {OpCode.LogicalDifferenceXjandXkToXi, 2},
+                {OpCode.TransmitXjandXkComplementToXi, 2},
+                {OpCode.LogicalProductXjandXkComplementToXi, 2},
+                {OpCode.LogicalSumXjandXkComplementToXi, 2},
+                {OpCode.LogicalDifferenceXjandXkComplementToXi, 2},
                 // Shift
-                {OpCode.ShiftXiLeftjkPlaces, 3},
-                {OpCode.ShiftXiRightjkPlaces, 3},
-                {OpCode.ShiftXiNominallyLeftBjPlaces, 3},
-                {OpCode.ShiftXiNominallyRightBjPlaces, 3},
-                {OpCode.NormalizeXkinXiandBj, 4},
-                {OpCode.RoundNormalizeXkinXiandBj, 4},
-                {OpCode.UnpackXktoXiandBj, 3},
-                {OpCode.PackXifromXkandBj, 3},
-                {OpCode.FormjkMaskinXi, 3},
-                // Add
+                {OpCode.ShiftXiLeftjkPlaces, 2},
+                {OpCode.ShiftXiRightjkPlaces, 2},
+                {OpCode.ShiftXiNominallyLeftBjPlaces, 2},
+                {OpCode.ShiftXiNominallyRightBjPlaces, 2},
+                {OpCode.NormalizeXkinXiandBj, 3},
+                {OpCode.RoundNormalizeXkinXiandBj, 3},
+                {OpCode.UnpackXktoXiandBj, 2},
+                {OpCode.PackXifromXkandBj, 2},
+                {OpCode.FormjkMaskinXi, 2},
+                // FloatingAdd
                 {OpCode.FloatingSum, 4},
                 {OpCode.FloatingDifference, 4},
                 {OpCode.FloatingDpSum, 4},
                 {OpCode.FloatingDpDifference, 4},
                 {OpCode.RoundFloatingSum, 4},
                 {OpCode.RoundFloatingDifference, 4},
-                // Long Add
-                {OpCode.IntegerSum, 3},
-                {OpCode.IntegerDifference, 3},
-                // Divide
-                {OpCode.FloatingDivide, 29},
-                {OpCode.RoundFloatingDivide, 29},
+                // FixedAdd
+                {OpCode.IntegerSum, 2},
+                {OpCode.IntegerDifference, 2},
+                // FloatingDivide
+                {OpCode.FloatingDivide, 20},
+                {OpCode.RoundFloatingDivide, 20},
                 {OpCode.Pass, 0},
                 {OpCode.SumOfOnes, 8},
-                // Multiply
-                {OpCode.FloatingProduct, 10},
-                {OpCode.RoundFloatingProduct, 10},
-                {OpCode.FloatingDpProduct, 10},
+                // FloatingMultiply
+                {OpCode.FloatingProduct, 5},
+                {OpCode.RoundFloatingProduct, 5},
+                {OpCode.FloatingDpProduct, 5},
                 // Increment
-                {OpCode.SumAjandKToAi,3},
-                {OpCode.SumBjandKToAi, 3},
-                {OpCode.SumXjandKToAi, 3},
-                {OpCode.SumXjandBkToAi, 3},
-                {OpCode.SumAjandBkToAi, 3},
-                {OpCode.DifferenceAjandBktoAi, 3},
-                {OpCode.SumBjandBktoZi, 3},
-                {OpCode.DifferenceBjandBktoZi, 3},
-                {OpCode.SumAjandKToBi, 3},
-                {OpCode.SumBjandKToBi, 3},
-                {OpCode.SumXjandKToBi, 3},
-                {OpCode.SumXjandBkToBi, 3},
-                {OpCode.SumAjandBkToBi, 3},
-                {OpCode.DifferenceAjandBktoBi, 3},
-                {OpCode.SumBjandBktoBi, 3},
-                {OpCode.DifferenceBjandBktoBi, 3},
-                {OpCode.SumAjandKToXi, 3},
-                {OpCode.SumBjandKToXi, 3},
-                {OpCode.SumXjandKToXi, 3},
-                {OpCode.SumXjandBkToXi, 3},
-                {OpCode.SumAjandBkToXi, 3},
-                {OpCode.DifferenceAjandBktoXi, 3},
-                {OpCode.SumBjandBktoXi, 3},
-                {OpCode.DifferenceBjandBktoXi, 3},
+                {OpCode.SumAjandKToAi, 2},
+                {OpCode.SumBjandKToAi, 2},
+                {OpCode.SumXjandKToAi, 2},
+                {OpCode.SumXjandBkToAi, 2},
+                {OpCode.SumAjandBkToAi, 2},
+                {OpCode.DifferenceAjandBktoAi, 2},
+                {OpCode.SumBjandBktoZi, 2},
+                {OpCode.DifferenceBjandBktoZi, 2},
+                {OpCode.SumAjandKToBi, 2},
+                {OpCode.SumBjandKToBi, 2},
+                {OpCode.SumXjandKToBi, 2},
+                {OpCode.SumXjandBkToBi, 2},
+                {OpCode.SumAjandBkToBi, 2},
+                {OpCode.DifferenceAjandBktoBi, 2},
+                {OpCode.SumBjandBktoBi, 2},
+                {OpCode.DifferenceBjandBktoBi, 2},
+                {OpCode.SumAjandKToXi, 2},
+                {OpCode.SumBjandKToXi, 2},
+                {OpCode.SumXjandKToXi, 2},
+                {OpCode.SumXjandBkToXi, 2},
+                {OpCode.SumAjandBkToXi, 2},
+                {OpCode.DifferenceAjandBktoXi, 2},
+                {OpCode.SumBjandBktoXi, 2},
+                {OpCode.DifferenceBjandBktoXi, 2},
                 #endregion
             };
             UnitMap = new Dictionary<OpCode, UnitType>
             {
                 #region Values
-                // Branch
-                {OpCode.Stop, UnitType.Branch},
-                {OpCode.ReturnJumpToK, UnitType.Branch},
-                {OpCode.GoToKplusBi, UnitType.Branch},
-                {OpCode.GoToKifXEqualsZero, UnitType.Branch},
-                {OpCode.GoToKifXNotEqualsZero, UnitType.Branch},
-                {OpCode.GoToKifXPositive, UnitType.Branch},
-                {OpCode.GoToKifXNegative, UnitType.Branch},
-                {OpCode.GoToKifInRange, UnitType.Branch},
-                {OpCode.GoToKifXOutOfRange, UnitType.Branch},
-                {OpCode.GoToKifXDefinite, UnitType.Branch},
-                {OpCode.GoToKifXIndefinite, UnitType.Branch},
-                {OpCode.GoToKifBiEqualsBj, UnitType.Branch},
-                {OpCode.GoToKifBiNotEqualsBj, UnitType.Branch},
-                {OpCode.GoToKifBiGreaterThanEqualToBj, UnitType.Branch},
-                {OpCode.GoToKifBiLessThanBj, UnitType.Branch},
+                // Normalize
+                {OpCode.Stop, UnitType.Normalize},
+                {OpCode.ReturnJumpToK, UnitType.Normalize},
+                {OpCode.GoToKplusBi, UnitType.Normalize},
+                {OpCode.GoToKifXEqualsZero, UnitType.Normalize},
+                {OpCode.GoToKifXNotEqualsZero, UnitType.Normalize},
+                {OpCode.GoToKifXPositive, UnitType.Normalize},
+                {OpCode.GoToKifXNegative, UnitType.Normalize},
+                {OpCode.GoToKifInRange, UnitType.Normalize},
+                {OpCode.GoToKifXOutOfRange, UnitType.Normalize},
+                {OpCode.GoToKifXDefinite, UnitType.Normalize},
+                {OpCode.GoToKifXIndefinite, UnitType.Normalize},
+                {OpCode.GoToKifBiEqualsBj, UnitType.Normalize},
+                {OpCode.GoToKifBiNotEqualsBj, UnitType.Normalize},
+                {OpCode.GoToKifBiGreaterThanEqualToBj, UnitType.Normalize},
+                {OpCode.GoToKifBiLessThanBj, UnitType.Normalize},
                 // Boolean
                 {OpCode.TransmitXjToXi, UnitType.Boolean},
                 {OpCode.LogicalProductXjandXkToXi, UnitType.Boolean},
@@ -157,25 +159,25 @@
                 {OpCode.UnpackXktoXiandBj, UnitType.Shift},
                 {OpCode.PackXifromXkandBj, UnitType.Shift},
                 {OpCode.FormjkMaskinXi, UnitType.Shift},
-                // Add
-                {OpCode.FloatingSum, UnitType.Add},
-                {OpCode.FloatingDifference, UnitType.Add},
-                {OpCode.FloatingDpSum, UnitType.Add},
-                {OpCode.FloatingDpDifference, UnitType.Add},
-                {OpCode.RoundFloatingSum, UnitType.Add},
-                {OpCode.RoundFloatingDifference, UnitType.Add},
-                // Long Add
-                {OpCode.IntegerSum, UnitType.LongAdd},
-                {OpCode.IntegerDifference, UnitType.LongAdd},
-                // Divide
-                {OpCode.FloatingDivide, UnitType.Divide},
-                {OpCode.RoundFloatingDivide, UnitType.Divide},
-                {OpCode.Pass, UnitType.Divide},
-                {OpCode.SumOfOnes, UnitType.Divide},
-                // Multiply
-                {OpCode.FloatingProduct, UnitType.Multiply},
-                {OpCode.RoundFloatingProduct, UnitType.Multiply},
-                {OpCode.FloatingDpProduct, UnitType.Multiply},
+                // FloatingAdd
+                {OpCode.FloatingSum, UnitType.FloatingAdd},
+                {OpCode.FloatingDifference, UnitType.FloatingAdd},
+                {OpCode.FloatingDpSum, UnitType.FloatingAdd},
+                {OpCode.FloatingDpDifference, UnitType.FloatingAdd},
+                {OpCode.RoundFloatingSum, UnitType.FloatingAdd},
+                {OpCode.RoundFloatingDifference, UnitType.FloatingAdd},
+                // FixedAdd
+                {OpCode.IntegerSum, UnitType.FixedAdd},
+                {OpCode.IntegerDifference, UnitType.FixedAdd},
+                // FloatingDivide
+                {OpCode.FloatingDivide, UnitType.FloatingDivide},
+                {OpCode.RoundFloatingDivide, UnitType.FloatingDivide},
+                {OpCode.Pass, UnitType.FloatingDivide},
+                {OpCode.SumOfOnes, UnitType.FloatingDivide},
+                // FloatingMultiply
+                {OpCode.FloatingProduct, UnitType.FloatingMultiply},
+                {OpCode.RoundFloatingProduct, UnitType.FloatingMultiply},
+                {OpCode.FloatingDpProduct, UnitType.FloatingMultiply},
                 // Increment
                 {OpCode.SumAjandKToAi, UnitType.Increment},
                 {OpCode.SumBjandKToAi, UnitType.Increment},
@@ -203,7 +205,13 @@
                 {OpCode.DifferenceBjandBktoXi, UnitType.Increment},
                 #endregion
             };
+            // Initialize all register values to zero.
             Registers = new Dictionary<Register, int>();
+            var registerTypes = Enum.GetValues(typeof(Register)).Cast<Register>();
+            foreach (var e in registerTypes)
+            {
+                Registers.Add(e, 0);
+            }
         }
 
         /// <summary>
@@ -213,13 +221,11 @@
         public void Reset()
         {
             U1 = U2 = U3 = null;
-            foreach (var unit in Scoreboard)
+            var registerTypes = Enum.GetValues(typeof(Register)).Cast<Register>();
+            foreach (var e in registerTypes)
             {
-                unit.IsReserved = false;
-                unit.LastStart = 0;
-                unit.Pipeline.Clear();
+                Registers[e] = 0;
             }
-            Registers.Clear();
         }
     }
 }

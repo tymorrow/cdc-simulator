@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
 
     /// <summary>
     /// CDC6600 Simulator Class that executes instructions and outputs timing results.
@@ -20,6 +19,8 @@
         private const int NEW_WORD_TIME = 6;
         private const int FETCH_TIME = 4;
         private const int STORE_TIME = 4;
+        private const int OOS_INSTRUCTION_BRANCH_COST = 6;
+        private bool _branched = false;
 
         /// <summary>
         /// Takes a list of instructions and resets all of the timing information 
@@ -52,8 +53,6 @@
                 // Increment clock cycle timer
                 _timeCounter++;
 
-                // PrintTime();
-
                 // Process U Registers
                 if (_cpu.U3 != null)
                 {
@@ -69,10 +68,9 @@
                         _timeCounter = _lastWordStart + NEW_WORD_TIME - 1;
                 }
 
-                if (_cpu.U3 == null)
-                {
-                    ShiftRegisters();
-                }
+                if (_cpu.U3 != null) continue;
+                
+                ShiftRegisters();
             }
 
             PrintSchedule();
@@ -85,103 +83,193 @@
         /// </summary>
         private void AttemptToProcessNextInstruction()
         {
+            var instructionIndex = _instructionCounter;
+            if (_instructionCounter > _instructions.Count - 1)
+            {
+                instructionIndex = _instructions.Count - 1;
+            }
             // Find functional unit for this instruction
             var unitType = _cpu.UnitMap[_cpu.U3.OpCode];
             var unit = _cpu.Scoreboard.Single(u => u.Type == unitType);
 
             // Check for first order conflict
             if (!unit.IsReady(_timeCounter)) return;
+            
+            // Assign initial timing values
+            var issue = _timeCounter;
+            var start = _timeCounter;
+            var result = start + _cpu.TimingMap[_cpu.U3.OpCode];
 
             // Check for second order conflict
-            foreach(var fu in _cpu.Scoreboard)
+            for (var i = 0; i < instructionIndex; i++)
             {
-                foreach(var i in fu.Pipeline)
+                // Detect proper register being waited on
+                var outputRegister = _cpu.U3.Operand1;
+                if (_cpu.U3.Operand1 == Register.A6)
+                    outputRegister = Register.X6;
+                if (_cpu.U3.Operand1 == Register.A7)
+                    outputRegister = Register.X7;
+
+                if (_instructions[i].OutputRegister != outputRegister &&
+                    _instructions[i].OutputRegister != _cpu.U3.Operand2) continue;
+
+                var tempStart = 0;
+                // Detect if this instruction is waiting on a value from memory
+                if (_instructions[i].OpCode >= OpCode.SumAjandKToAi &&
+                    _instructions[i].OpCode <= OpCode.DifferenceBjandBktoXi) // Increment
                 {
-                    if(i.OutputRegister == _cpu.U3.Operand1 || 
-                       i.OutputRegister == _cpu.U3.Operand2)
+                    if (_instructions[i].Operand1 >= Register.A1 &&
+                        _instructions[i].Operand1 <= Register.A5) // Read from Memory
                     {
-                        // Reserve unit and issue instruction, but delay execution
-                        unit.IsReserved = true;
-                        unit.Pipeline.Enqueue(_cpu.U3);
-                        unit.LastStart = i.Result;
-
-                        _cpu.U3.Issue = _timeCounter;
-                        // Calculate start time
-                        if(i.OpCode >= OpCode.SumAjandKToAi && i.OpCode <= OpCode.DifferenceBjandBktoXi) // Increment
-                        {
-                                
-                            if(i.Operand1 >= Register.A1 && i.Operand1 <= Register.A5) // Read from Memory
-                            {
-                                _cpu.U3.Start = i.Fetch ?? 0;
-                            }
-                            else if(i.Operand1 >= Register.A6 && i.Operand1 <= Register.A7) // Write to Memory
-                            {
-                                _cpu.U3.Start = i.Store ?? 0;
-                            }
-                        }
-                        else
-                        {
-                            _cpu.U3.Start = i.Result;
-                        }
-                        // Calculate when result will be generated
-                        _cpu.U3.Result = _cpu.U3.Start + _cpu.TimingMap[_cpu.U3.OpCode];
-                        CalculateU3StoreFetchTiming();
-                        _cpu.U3.UnitReady = i.Result + unit.SegmentTime;
-                        _cpu.U3.IsFinished = true;
-                        _output.Add(_cpu.U3.GetScheduleOutput());
-
-                        if (_cpu.U3.Length == InstructionLength.Long)
-                            _timeCounter++;
-                        _cpu.U3 = null;
-                        return;
+                        tempStart = _instructions[i].Fetch ?? 0;
+                    }
+                    else if (_instructions[i].Operand1 >= Register.A6 &&
+                        _instructions[i].Operand1 <= Register.A7) // Write to Memory
+                    {
+                        tempStart = _instructions[i].Store ?? 0;
                     }
                 }
+                else
+                {
+                    tempStart = _instructions[i].Result;
+                }
+
+                // The result with the largest delay dictates when this instruction can start
+                if (start >= tempStart) continue;
+
+                start = tempStart;
+                result = start + _cpu.TimingMap[_cpu.U3.OpCode];
             }
+
             // Check for third order conflict
-            foreach (var fu in _cpu.Scoreboard)
+            for (var i = 0; i < instructionIndex; i++)
             {
-                foreach (var i in fu.Pipeline)
+                if (_instructions[i].Operand1 != _cpu.U3.OutputRegister &&
+                    _instructions[i].Operand2 != _cpu.U3.OutputRegister) continue;
+
+                if (result < _instructions[i].Result)
                 {
-                    if (i.Operand1 == _cpu.U3.OutputRegister ||
-                        i.Operand2 == _cpu.U3.OutputRegister)
-                    {
-                        // Issue/Start execution but hold result until conflict resolved
-                        unit.Pipeline.Enqueue(_cpu.U3);
-                        unit.LastStart = _timeCounter;
-
-                        _cpu.U3.Issue = _timeCounter;
-                        _cpu.U3.Start = _timeCounter;
-                        _cpu.U3.Result = i.Result;
-                        CalculateU3StoreFetchTiming();
-                        _cpu.U3.UnitReady = i.Result + unit.SegmentTime;
-                        _cpu.U3.IsFinished = true;
-                        _output.Add(_cpu.U3.GetScheduleOutput());
-
-                        if (_cpu.U3.Length == InstructionLength.Long)
-                            _timeCounter++;
-                        _cpu.U3 = null;
-                        return;
-                    }
+                    result = _instructions[i].Result;
                 }
             }
 
-            // No conflict; issue/start instruction immediately
             unit.Pipeline.Enqueue(_cpu.U3);
-            unit.LastStart = _timeCounter;
+            unit.LastStart = issue;
 
             // Fill out schedule for instruction
-            _cpu.U3.Issue = _timeCounter;
-            _cpu.U3.Start = _timeCounter;
-            _cpu.U3.Result = _timeCounter + _cpu.TimingMap[_cpu.U3.OpCode];
+            _cpu.U3.Issue = issue;
+            _cpu.U3.Start = start;
+            _cpu.U3.Result = result;
             CalculateU3StoreFetchTiming();
-            _cpu.U3.UnitReady = _timeCounter + unit.SegmentTime;
+            _cpu.U3.UnitReady = start + unit.SegmentTime;
             _cpu.U3.IsFinished = true;
+            if (_cpu.U3.IsStartOfWord)
+            {
+                _output.Add(Environment.NewLine);
+                _lastWordStart = _timeCounter;
+            }
             _output.Add(_cpu.U3.GetScheduleOutput());
 
-            // Skip a cycle if instruction is long
-            if (_cpu.U3.Length == InstructionLength.Long)
-                _timeCounter++;
-            _cpu.U3 = null;
+            if (DetectBranch())
+            {
+                _lastWordStart += OOS_INSTRUCTION_BRANCH_COST + 3;
+            }
+            else
+            {
+                // Skip a cycle if instruction is long
+                if (_cpu.U3.Length == InstructionLength.Long)
+                    _timeCounter++;
+                DetectDecrement();
+                _cpu.U3 = null;
+            }
+        }
+        /// <summary>
+        /// Detects whether or not the issued instruction is a branch 
+        /// and responds accordingly to it.
+        /// </summary>
+        /// <returns>Returns true if branch was detected, otherwise false.</returns>
+        private bool DetectBranch()
+        {
+            var canBranch = false;
+            var branchDestination = _cpu.U3.BranchTo;
+            switch (_cpu.U3.OpCode)
+            {
+                case OpCode.ReturnJumpToK:
+                    canBranch = true;
+                    break;
+                case OpCode.GoToKplusBi:
+                    var index = _instructions.IndexOf(branchDestination);
+                    branchDestination = _instructions[index];
+                    canBranch = true;
+                    break;
+                case OpCode.GoToKifXEqualsZero:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] == 0;
+                    break;
+                case OpCode.GoToKifXNotEqualsZero:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] != 0;
+                    break;
+                case OpCode.GoToKifXPositive:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] >= 0;
+                    break;
+                case OpCode.GoToKifXNegative:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand2] < 0;
+                    break;
+                case OpCode.GoToKifBiEqualsBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] ==
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
+                case OpCode.GoToKifBiNotEqualsBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] !=
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
+                case OpCode.GoToKifBiGreaterThanEqualToBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] >=
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
+                case OpCode.GoToKifBiLessThanBj:
+                    canBranch = _cpu.Registers[_cpu.U3.Operand1] <
+                                _cpu.Registers[_cpu.U3.Operand2];
+                    break;
+            }
+            if (!canBranch) return false;
+
+            _timeCounter = _cpu.U3.Result + OOS_INSTRUCTION_BRANCH_COST;
+            var indexOfDestination = _instructions.IndexOf(branchDestination);
+            for (var i = indexOfDestination; i < _instructions.Count; i++)
+            {
+                _instructions[i].Reset();
+            }
+            if (!_instructions[indexOfDestination].IsStartOfWord)
+            {
+                _instructions[indexOfDestination].IsStartOfWord = true;
+            }
+            _instructionCounter = indexOfDestination;
+            _cpu.U1 = _cpu.U2 = _cpu.U3 = null;
+            _branched = true;
+            return true;
+        }
+        /// <summary>
+        /// Detects whether or not the issued instruction is an increment
+        /// and responds accordingly to it.
+        /// </summary>
+        /// <returns></returns>
+        private void DetectDecrement()
+        {
+            if (_cpu.U3.OpCode >= OpCode.SumAjandKToAi &&
+                _cpu.U3.OpCode <= OpCode.DifferenceBjandBktoXi)
+            {
+                var leftBRegister = _cpu.Registers[_cpu.U3.Operand1];
+                var rightBRegister = _cpu.Registers[_cpu.U3.Operand2];
+                switch (_cpu.U3.OpCode)
+                {
+                    case OpCode.SumBjandBktoBi:
+                        _cpu.Registers[_cpu.U3.OutputRegister] = leftBRegister + rightBRegister;
+                        break;
+                    case OpCode.DifferenceBjandBktoBi:
+                        _cpu.Registers[_cpu.U3.OutputRegister] = leftBRegister - rightBRegister;
+                        break;
+                }
+            }
         }
         /// <summary>
         /// Sets the Store or Fetch timing information if necessary based on OpCode.
@@ -208,7 +296,7 @@
             foreach(var unit in _cpu.Scoreboard)
             {
                 // Return immediately if no instructions are in the pipeline
-                if (!unit.Pipeline.Any()) continue;
+                if (!unit.Pipeline.Any() && !unit.Pipeline.Any(i => i.IsBeingHeld)) continue;
 
                 // Initiate any pending reservations from 2nd order conflicts
                 if(unit.Pipeline.Any(i => i.IsBeingHeld))
@@ -220,13 +308,41 @@
                     }
                 }
 
-                // Clear the front of the pipeline of completed instructions
-                var frontInstructionCompletionTime = unit.Pipeline.Peek().Result;
-                if (frontInstructionCompletionTime >= _timeCounter)
+                // If unit instructions have fetched a value, store it in the appropriate register.
+                foreach (var instruction in _instructions)
                 {
-                    unit.Pipeline.Dequeue();
+                    if (!instruction.IsFinished) continue;
+
+                    if (InstructionIsFetch(instruction) && instruction.Fetch <= _timeCounter)
+                    {
+                        _cpu.Registers[instruction.OutputRegister] = instruction.Value;
+                    }
+                }
+
+                // Clear the pipeline of completed instructions
+                for (var i = unit.Pipeline.Count - 1; i >= 0; i--)
+                {
+                    if (unit.Pipeline.ElementAt(i).Result >= _timeCounter)
+                    {
+                        unit.Pipeline.Dequeue();
+                    }
                 }
             }
+        }
+        /// <summary>
+        /// Determines if the given instruction involves a fetch 
+        /// based on its OpCode
+        /// </summary>
+        /// <param name="instruction">Takes an Instruction object.</param>
+        /// <returns>Returns true or false.</returns>
+        private bool InstructionIsFetch(Instruction instruction)
+        {
+            if (instruction.OpCode < OpCode.SumAjandKToAi ||
+                instruction.OpCode > OpCode.DifferenceBjandBktoXi)
+                return false;
+
+            return instruction.Operand1 >= Register.A1 &&
+                   instruction.Operand1 <= Register.A5;
         }
         /// <summary>
         /// Shifts the CPU U registers and adjusts the time counter appropriately
@@ -234,14 +350,12 @@
         /// </summary>
         private void ShiftRegisters()
         {
-            if (_cpu.U2 != null && _cpu.U2.IsStartOfWord)
-                _lastWordStart = _timeCounter + 1;
-                
             _cpu.U3 = _cpu.U2;
             _cpu.U2 = _cpu.U1;
-            _cpu.U1 = _instructionCounter < _instructions.Count 
-                ? _instructions[_instructionCounter] 
+            _cpu.U1 = _instructionCounter < _instructions.Count
+                ? _instructions[_instructionCounter]
                 : null;
+
             _instructionCounter++;
         }
 
@@ -268,14 +382,41 @@
             Console.WriteLine("U-Registers: {0}  \t->  {1}  \t->  {2}", u1, u2, u3);
         }
         /// <summary>
+        /// Prints the timing information for a given instruction to the Console.
+        /// </summary>
+        private void PrintInstructionTiming(Instruction i)
+        {
+            Console.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}",
+                    (int)i.OpCode,
+                    i.Length.ToString()[0],
+                    i.Issue,
+                    i.Start,
+                    i.Result,
+                    i.UnitReady,
+                    i.Fetch,
+                    i.Store);
+        }
+        /// <summary>
+        /// Prints the current contents of the CPU registers.
+        /// </summary>
+        private void PrintRegisters()
+        {
+            var registerTypes = Enum.GetValues(typeof(Register)).Cast<Register>();
+            foreach (var e in registerTypes)
+            {
+                Console.WriteLine("Register: {0}[{1}]",
+                    e, _cpu.Registers[e]);
+            }
+        }
+        /// <summary>
         /// Prints the timing schedule for the internal list of instructions.
         /// </summary>
         private void PrintSchedule()
         {
             Console.WriteLine();
             Console.WriteLine(NAME);
-            Console.WriteLine("====================== Timing Schedule ======================");
-            Console.WriteLine("Code\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
+            Console.WriteLine("========================== Timing Schedule ==========================");
+            Console.WriteLine("Code\t\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
             foreach (var i in _output)
             {
                 Console.WriteLine(i);

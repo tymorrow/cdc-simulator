@@ -12,6 +12,7 @@
         public Register Operand2 { get; set; }
         public Register OutputRegister { get; set; }
         public Instruction BranchTo { get; set; }
+        public int Value { get; set; }
 
         public int Issue { get; set; }
         public int Start { get; set; }
@@ -40,7 +41,7 @@
         public string GetScheduleOutput()
         {
             return string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}",
-                    (int)OpCode,
+                    OpCode.ToString().Substring(0, 10),
                     Length.ToString()[0],
                     Issue,
                     Start,
@@ -48,6 +49,21 @@
                     UnitReady,
                     Fetch,
                     Store);
+        }
+        /// <summary>
+        /// Resets all of the instructions timing information to 
+        /// their default values.
+        /// </summary>
+        internal void Reset()
+        {
+            Issue = 0;
+            Start = 0;
+            Result = 0;
+            UnitReady = 0;
+            Fetch = null;
+            Store = null;
+            IsFinished = false;
+            IsBeingHeld = false;
         }
     }
 }

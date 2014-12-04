@@ -1,6 +1,7 @@
 ﻿namespace Cdc.Simulator7600
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a pipelined functional unit by implementing a Queue
@@ -32,7 +33,11 @@
         /// Otherwise, it returns false.</returns>
         public bool IsReady(int currentTime)
         {
-            return (LastStart + SegmentTime <= currentTime) || IsReserved;
+            if (Pipeline.Any())
+            {
+                return Pipeline.Last().UnitReady <= currentTime;
+            }
+            return true;
         }
     }
 }

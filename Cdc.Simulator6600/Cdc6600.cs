@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
 
     /// <summary>
     /// CDC6600 Simulator Class that executes instructions and outputs timing results.
@@ -98,16 +97,16 @@
             // Find functional unit for this instruction
             var unitType = _cpu.UnitMap[_cpu.U3.OpCode];
 
-            // Assign initial timing values
-            var issue = _timeCounter;
-            var start = _timeCounter;
-            var result = start + _cpu.TimingMap[_cpu.U3.OpCode];
-
             // Check for first order conflict
             if (!_cpu.Scoreboard.Any(u => u.Type == unitType && !u.IsInUse()))
             {
                 return;
             }
+
+            // Assign initial timing values
+            var issue = _timeCounter;
+            var start = _timeCounter;
+            var result = start + _cpu.TimingMap[_cpu.U3.OpCode];
 
             var unit = _cpu.Scoreboard.First(u => u.Type == unitType && !u.IsInUse());
 
@@ -168,7 +167,10 @@
             _cpu.U3.Start = start;
             _cpu.U3.Result = result;
             if (_cpu.U3.IsStartOfWord)
-                _lastWordStart = start;
+            {
+                _output.Add(Environment.NewLine);
+                _lastWordStart = _timeCounter;
+            }
             CalculateU3StoreFetchTiming();
             _cpu.U3.UnitReady = _cpu.U3.Result + 1;
             _cpu.U3.IsFinished = true;
@@ -319,7 +321,6 @@
                 }
             }
         }
-
         /// <summary>
         /// Determines if the given instruction involves a fetch 
         /// based on its OpCode
