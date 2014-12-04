@@ -165,13 +165,18 @@
             unit.InUse = _cpu.U3;
             _output.Add(_cpu.U3.GetScheduleOutput());
 
-            if (!DetectBranch())
+            if (DetectBranch())
+            {
+                _cpu.U3 = null;
+            }
+            else
             {
                 // Skip a cycle if instruction is long
                 if (_cpu.U3.Length == InstructionLength.Long)
                     _timeCounter++;
+                DetectDecrement();
+                _cpu.U3 = null;
             }
-            _cpu.U3 = null;
         }
         /// <summary>
         /// Detects whether or not the issued instruction is a branch 
@@ -232,6 +237,29 @@
             _timeCounter += _cpu.U3.Result + OOS_INSTRUCTION_BRANCH_COST;
             _cpu.U1 = _cpu.U2 = _cpu.U3 = null;
             return true;
+        }
+        /// <summary>
+        /// Detects whether or not the issued instruction is an increment
+        /// and responds accordingly to it.
+        /// </summary>
+        /// <returns></returns>
+        private void DetectDecrement()
+        {
+            if (_cpu.U3.OpCode >= OpCode.SumAjandKToAi &&
+                _cpu.U3.OpCode <= OpCode.DifferenceBjandBktoXi)
+            {
+                var leftBRegister = _cpu.Registers[_cpu.U3.Operand1];
+                var rightBRegister = _cpu.Registers[_cpu.U3.Operand2];
+                switch (_cpu.U3.OpCode)
+                {
+                    case OpCode.SumBjandBktoBi:
+                        _cpu.Registers[_cpu.U3.OutputRegister] = leftBRegister + rightBRegister;
+                        break;
+                    case OpCode.DifferenceBjandBktoBi:
+                        _cpu.Registers[_cpu.U3.OutputRegister] = leftBRegister - rightBRegister;
+                        break;
+                }
+            }
         }
         /// <summary>
         /// Sets the Store or Fetch timing information if necessary based on OpCode.
@@ -366,8 +394,8 @@
         {
             Console.WriteLine();
             Console.WriteLine(NAME);
-            Console.WriteLine("====================== Timing Schedule ======================");
-            Console.WriteLine("Code\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
+            Console.WriteLine("========================== Timing Schedule ==========================");
+            Console.WriteLine("Code\t\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
             foreach (var i in _output)
             {
                 Console.WriteLine(i);
