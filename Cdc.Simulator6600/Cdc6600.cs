@@ -409,8 +409,8 @@
         {
             Console.WriteLine();
             Console.WriteLine(NAME);
-            Console.WriteLine("========================== Timing Schedule ==========================");
-            Console.WriteLine("Code\t\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
+            Console.WriteLine("============================= Timing Schedule =============================");
+            Console.WriteLine("Inst.\t\tOpCode\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
             foreach (var i in _output)
             {
                 Console.WriteLine(i);
@@ -426,8 +426,8 @@
             var stringbuilder = new StringBuilder();
             stringbuilder.AppendLine();
             stringbuilder.AppendLine(NAME);
-            stringbuilder.AppendLine("========================== Timing Schedule ==========================");
-            stringbuilder.AppendLine("Code\t\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
+            stringbuilder.AppendLine("============================= Timing Schedule =============================");
+            stringbuilder.AppendLine("Inst.\t\tOpCode\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
             foreach (var i in _output)
             {
                 stringbuilder.AppendLine(i);

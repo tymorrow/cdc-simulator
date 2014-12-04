@@ -40,8 +40,9 @@
         /// <returns>Returns a string.</returns>
         public string GetScheduleOutput()
         {
-            return string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}",
-                    OpCode.ToString().Substring(0, 10),
+            return string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}",
+                    OutputRegister + "=" + Operand1 + "," + Operand2,
+                    (int)OpCode,
                     Length.ToString()[0],
                     Issue,
                     Start,

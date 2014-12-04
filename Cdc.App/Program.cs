@@ -37,13 +37,13 @@
             var cdc7600 = new Cdc7600();
             sb.AppendLine("Executing Instruction Set 1");
             cdc7600.AddInstructions(set7600.InstructionSet1);
-            sb.AppendLine(cdc6600.Run());
+            sb.AppendLine(cdc7600.Run());
             sb.AppendLine("Executing Instruction Set 2");
             cdc7600.AddInstructions(set7600.InstructionSet2);
-            sb.AppendLine(cdc6600.Run());
+            sb.AppendLine(cdc7600.Run());
             sb.AppendLine("Executing Instruction Set 3");
             cdc7600.AddInstructions(set7600.InstructionSet3);
-            sb.AppendLine(cdc6600.Run());
+            sb.AppendLine(cdc7600.Run());
 
             // Output the results to a file.
             const string outputFolder = @"Results\";

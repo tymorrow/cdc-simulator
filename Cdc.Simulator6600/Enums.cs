@@ -6,7 +6,7 @@
     /// </summary>
     public enum Register
     {
-        K = 0,
+        Ki = 0,
         X0,
         X1, // Read
         X2, // Read
