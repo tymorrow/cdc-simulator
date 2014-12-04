@@ -190,7 +190,7 @@
             }, // Store Y
             #endregion
         };
-        // AX^2 + BX + C (X and Y are vectors of n elements)
+        // AX^2 + BX + C (X and Y are vectors of n elements where n = 5)
         public readonly List<Instruction> InstructionSet3 = new List<Instruction>();
 
         public InstructionSet()

@@ -10,7 +10,7 @@
     public class Cdc6600
     {
         private List<Instruction> _instructions = new List<Instruction>();
-        private List<string> _output = new List<string>();
+        private readonly List<string> _output = new List<string>();
         private readonly Cpu _cpu = new Cpu();
         private int _timeCounter = -3;
         private int _instructionCounter;
@@ -20,7 +20,7 @@
         private const int FETCH_TIME = 5;
         private const int STORE_TIME = 5;
         private const int OOS_INSTRUCTION_BRANCH_COST = 6;
-        private bool _branched = false;
+        private bool _branched;
 
         /// <summary>
         /// Takes a list of instructions and resets all of the timing information 
@@ -413,6 +413,7 @@
             {
                 Console.WriteLine(i);
             }
+            Console.WriteLine();
             Console.WriteLine();
         }
     }

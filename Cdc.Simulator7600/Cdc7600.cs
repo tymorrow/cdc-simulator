@@ -10,7 +10,7 @@
     public class Cdc7600
     {
         private List<Instruction> _instructions = new List<Instruction>();
-        private List<string> _output = new List<string>();
+        private readonly List<string> _output = new List<string>();
         private readonly Cpu _cpu = new Cpu();
         private int _timeCounter = -3;
         private int _instructionCounter;
@@ -20,7 +20,7 @@
         private const int FETCH_TIME = 4;
         private const int STORE_TIME = 4;
         private const int OOS_INSTRUCTION_BRANCH_COST = 6;
-        private bool _branched = false;
+        private bool _branched;
 
         /// <summary>
         /// Takes a list of instructions and resets all of the timing information 
@@ -64,8 +64,14 @@
                     AttemptToProcessNextInstruction();
 
                     // Detect end of word and increment time accordingly
-                    if (newWordComing)
+                    if (newWordComing && !_branched)
+                    {
                         _timeCounter = _lastWordStart + NEW_WORD_TIME - 1;
+                    }
+                    if (_branched)
+                    {
+                        _branched = false;
+                    }
                 }
 
                 if (_cpu.U3 != null) continue;
@@ -421,6 +427,7 @@
             {
                 Console.WriteLine(i);
             }
+            Console.WriteLine();
             Console.WriteLine();
         }
     }
