@@ -283,22 +283,22 @@
             {
                 OpCode = OpCode.FloatingProduct,
                 Length = InstructionLength.Short,
-                Operand1 = Register.X0,
-                Operand2 = Register.X1,
-                OutputRegister = Register.X4,
-                IsStartOfWord = false,
-                IsEndOfWord = false
-            }); // Form AX^2
-            InstructionSet3.Add(new Instruction
-            {
-                OpCode = OpCode.FloatingProduct,
-                Length = InstructionLength.Short,
                 Operand1 = Register.X2,
                 Operand2 = Register.X5,
                 OutputRegister = Register.X0,
                 IsStartOfWord = false,
                 IsEndOfWord = false
             }); // Form BX
+            InstructionSet3.Add(new Instruction
+            {
+                OpCode = OpCode.FloatingProduct,
+                Length = InstructionLength.Short,
+                Operand1 = Register.X0,
+                Operand2 = Register.X1,
+                OutputRegister = Register.X4,
+                IsStartOfWord = false,
+                IsEndOfWord = false
+            }); // Form AX^2
             InstructionSet3.Add(new Instruction
             {
                 OpCode = OpCode.FloatingSum,
@@ -326,7 +326,7 @@
                 Operand1 = Register.B2,
                 Operand2 = Register.B0,
                 OutputRegister = Register.B0,
-                IsStartOfWord = true,
+                IsStartOfWord = false,
                 IsEndOfWord = false
             }); // Increment B0 by B2
             InstructionSet3.Add(new Instruction
@@ -347,7 +347,7 @@
                 Operand2 = Register.B0,
                 OutputRegister = Register.K,
                 IsStartOfWord = true,
-                IsEndOfWord = false,
+                IsEndOfWord = true,
                 BranchTo = InstructionSet3[5]
             }); // Branch to instruction 6 if B1 != BO
 

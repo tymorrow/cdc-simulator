@@ -21,6 +21,7 @@
         private const int FETCH_TIME = 5;
         private const int STORE_TIME = 5;
         private const int OOS_INSTRUCTION_BRANCH_COST = 6;
+        private bool _branched = false;
 
         /// <summary>
         /// Takes a list of instructions and resets all of the timing information 
@@ -61,9 +62,16 @@
                     UpdateScoreboard();
                     // See if the next instruction can be added to its functional unit
                     AttemptToProcessNextInstruction();
+                    
                     // Detect end of word and increment time accordingly
-                    if (newWordComing)
+                    if (newWordComing && !_branched)
+                    {
                         _timeCounter = _lastWordStart + NEW_WORD_TIME - 1;
+                    }
+                    if(_branched)
+                    {
+                        _branched = false;
+                    }
                 }
 
                 // Instruction wasn't issued (first order conflict), so don't shift registers.
@@ -159,6 +167,8 @@
             _cpu.U3.Issue = issue;
             _cpu.U3.Start = start;
             _cpu.U3.Result = result;
+            if (_cpu.U3.IsStartOfWord)
+                _lastWordStart = start;
             CalculateU3StoreFetchTiming();
             _cpu.U3.UnitReady = _cpu.U3.Result + 1;
             _cpu.U3.IsFinished = true;
@@ -167,7 +177,7 @@
 
             if (DetectBranch())
             {
-                _cpu.U3 = null;
+                _lastWordStart += OOS_INSTRUCTION_BRANCH_COST + 3;
             }
             else
             {
@@ -228,14 +238,19 @@
             }
             if (!canBranch) return false;
 
+            _timeCounter = _cpu.U3.Result + OOS_INSTRUCTION_BRANCH_COST;
             var indexOfDestination = _instructions.IndexOf(branchDestination);
             for (var i = indexOfDestination; i < _instructions.Count; i++)
             {
                 _instructions[i].Reset();
             }
+            if (!_instructions[indexOfDestination].IsStartOfWord)
+            {
+                _instructions[indexOfDestination].IsStartOfWord = true;
+            }
             _instructionCounter = indexOfDestination;
-            _timeCounter += _cpu.U3.Result + OOS_INSTRUCTION_BRANCH_COST;
             _cpu.U1 = _cpu.U2 = _cpu.U3 = null;
+            _branched = true;
             return true;
         }
         /// <summary>
@@ -326,9 +341,6 @@
         /// </summary>
         private void ShiftRegisters()
         {
-            if (_cpu.U2 != null && _cpu.U2.IsStartOfWord)
-                _lastWordStart = _timeCounter + 1;
-
             _cpu.U3 = _cpu.U2;
             _cpu.U2 = _cpu.U1;
             _cpu.U1 = _instructionCounter < _instructions.Count
