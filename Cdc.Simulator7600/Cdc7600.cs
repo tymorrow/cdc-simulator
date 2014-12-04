@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
 
     /// <summary>
     /// CDC6600 Simulator Class that executes instructions and outputs timing results.
@@ -41,10 +42,10 @@
         /// Takes the internal list of Instructions, if any, and fills out their 
         /// timing information by simulating CDC behavior and rules.
         /// </summary>
-        public void Run()
+        public string Run()
         {
             // Return no time if no instructions exist
-            if (!_instructions.Any()) return;
+            if (!_instructions.Any()) return string.Empty;
             _instructionCounter = 0;
 
             // Simulate clock cycles processing the instructions until all are finished
@@ -80,6 +81,7 @@
             }
 
             PrintSchedule();
+            return GetSchedule();
         }
 
         /// <summary>
@@ -171,7 +173,7 @@
             _cpu.U3.IsFinished = true;
             if (_cpu.U3.IsStartOfWord)
             {
-                _output.Add(Environment.NewLine);
+                _output.Add(string.Empty);
                 _lastWordStart = _timeCounter;
             }
             _output.Add(_cpu.U3.GetScheduleOutput());
@@ -428,7 +430,24 @@
                 Console.WriteLine(i);
             }
             Console.WriteLine();
-            Console.WriteLine();
+        }
+        /// <summary>
+        /// Assembles a string containing the timing schedule for the 
+        /// internal list of instructions.
+        /// </summary>
+        private string GetSchedule()
+        {
+            var stringbuilder = new StringBuilder();
+            stringbuilder.AppendLine();
+            stringbuilder.AppendLine(NAME);
+            stringbuilder.AppendLine("========================== Timing Schedule ==========================");
+            stringbuilder.AppendLine("Code\t\tLength\tIssue\tStart\tResult\tUnit\tFetch\tStore");
+            foreach (var i in _output)
+            {
+                stringbuilder.AppendLine(i);
+            }
+            stringbuilder.AppendLine();
+            return stringbuilder.ToString();
         }
     }
 }
